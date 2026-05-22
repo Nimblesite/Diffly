@@ -1,4 +1,6 @@
-# Diffy — VSCode Extension Plan
+# Diffy — VSCode Extension Spec
+
+Execution plan and live TODO checklist: [../plans/plan.md](../plans/plan.md).
 
 ## Context
 
@@ -8,7 +10,7 @@ Diffy is a new VSCode extension whose only job is **"pick two things and diff th
 
 ## Stack decision: pure TypeScript
 
-LSP exposes **language** semantics (completion, hover, diagnostics). Diffy does none of that — it shells out to `git` and hands two URIs to `vscode.diff`. A Rust LSP adds per-platform binaries, IPC plumbing, and deployment complexity for zero capability or perf gain. Match the existing [CommandTree](../../Documents/Code/CommandTree) TS-only structure.
+LSP exposes **language** semantics (completion, hover, diagnostics). Diffy does none of that — it shells out to `git` and hands two URIs to `vscode.diff`. A Rust LSP adds per-platform binaries, IPC plumbing, and deployment complexity for zero capability or perf gain. Match the existing [CommandTree](../../../CommandTree) TS-only structure.
 
 ## Non-negotiables (inherited from CommandTree CLAUDE.md)
 
@@ -63,6 +65,9 @@ Command palette:
 ├── CHANGELOG.md
 ├── LICENSE
 ├── CLAUDE.md                       # copied from CommandTree, project-specific edits
+├── docs/
+│   ├── specs/spec.md               # this file
+│   └── plans/plan.md               # phased execution plan + TODO checklist
 ├── src/
 │   ├── extension.ts                # activate/deactivate; command + provider registration ONLY
 │   ├── constants.ts                # command IDs, scheme name, context keys
@@ -203,10 +208,6 @@ diffy.compareFileWithCommit(uri)
   → vscode.diff(leftUri, rightUri, `${shortSha} ↔ Working Copy — ${basename}`)
 ```
 
-## Out of scope for v1
-
-Custom diff renderer; activity-bar icon; sidebar / tree view; webviews; blame; merge conflict UI; three-way diff; stash diffing; GitHub/GitLab PR integration; remote-fetch on demand; submodule support; LFS-aware preview; per-hunk staging; binary file preview.
-
 ## Testing strategy
 
 **Unit (`src/test/unit/`, mocha, no VSCode):**
@@ -222,43 +223,10 @@ Custom diff renderer; activity-bar icon; sidebar / tree view; webviews; blame; m
 
 Coverage starts at 80% in `coverage-thresholds.json`; ratchet-only.
 
+## Out of scope for v1
+
+Custom diff renderer; activity-bar icon; sidebar / tree view; webviews; blame; merge conflict UI; three-way diff; stash diffing; GitHub/GitLab PR integration; remote-fetch on demand; submodule support; LFS-aware preview; per-hunk staging; binary file preview.
+
 ## IntelliJ portability (noted, not pursued)
 
 `src/git/` (Runner, Repo, parsers, types) and `src/ui/uri.ts` are pure subprocess + string parsing — directly portable to Kotlin against `Git4Idea`. `RevSpec` / `ChangedFile` shapes port verbatim. Everything else is VSCode-API-specific (`vscode.diff` → `DiffManager.showDiff`; `TextDocumentContentProvider` → `VirtualFile`/`FileEditorProvider`; QuickPick → `JBPopupFactory`). Not worth pre-factoring; revisit on user demand.
-
-## Critical files to create
-
-- [src/extension.ts](../../Documents/Code/Diffy/src/extension.ts)
-- [src/constants.ts](../../Documents/Code/Diffy/src/constants.ts)
-- [src/git/GitRunner.ts](../../Documents/Code/Diffy/src/git/GitRunner.ts)
-- [src/git/GitRepo.ts](../../Documents/Code/Diffy/src/git/GitRepo.ts)
-- [src/git/parsers.ts](../../Documents/Code/Diffy/src/git/parsers.ts)
-- [src/providers/DiffyContentProvider.ts](../../Documents/Code/Diffy/src/providers/DiffyContentProvider.ts)
-- [src/ui/CommitPicker.ts](../../Documents/Code/Diffy/src/ui/CommitPicker.ts)
-- [src/ui/SideBPicker.ts](../../Documents/Code/Diffy/src/ui/SideBPicker.ts)
-- [src/ui/RefPicker.ts](../../Documents/Code/Diffy/src/ui/RefPicker.ts)
-- [src/ui/FilePicker.ts](../../Documents/Code/Diffy/src/ui/FilePicker.ts)
-- [src/ui/uri.ts](../../Documents/Code/Diffy/src/ui/uri.ts)
-- [src/commands/compareWith.ts](../../Documents/Code/Diffy/src/commands/compareWith.ts)
-- [src/commands/compareWithWorkingCopy.ts](../../Documents/Code/Diffy/src/commands/compareWithWorkingCopy.ts)
-- [src/commands/compareWithPrevious.ts](../../Documents/Code/Diffy/src/commands/compareWithPrevious.ts)
-- [src/commands/compareTwoCommits.ts](../../Documents/Code/Diffy/src/commands/compareTwoCommits.ts)
-- [src/commands/compareFileWithCommit.ts](../../Documents/Code/Diffy/src/commands/compareFileWithCommit.ts)
-- [package.json](../../Documents/Code/Diffy/package.json)
-- [Makefile](../../Documents/Code/Diffy/Makefile)
-- [CLAUDE.md](../../Documents/Code/Diffy/CLAUDE.md)
-
-## Verification
-
-1. **Scaffold**: `make setup && make build` succeeds; `make lint` and `make fmt CHECK=1` clean.
-2. **Tests**: `make test` runs unit + E2E suites against the seed repo; thresholds enforced from `coverage-thresholds.json`.
-3. **Manual smoke** in an Extension Development Host on a real repo:
-   - Open Source Control → Graph/History → right-click a commit → **Compare with…** → pick another commit → FilePicker lists changed files → click one → diff tab opens with both historical revisions
-   - Same commit → right-click → **Compare with Working Copy** → FilePicker → click a file → diff shows commit-vs-live (edits in the editor reflect in the right pane)
-   - Same commit → right-click → **Compare with Previous** → diff opens immediately against `^1`
-   - Pick **Branch/Tag** in SideBPicker → ref resolves to a SHA → behaves as commit-vs-commit
-   - Source Control Changes view → right-click a modified file → **Compare with Commit…** → pick a commit → diff opens
-   - Right-click a file in Explorer / editor title → **Compare with Commit…** → same as above
-   - Palette → **Diffy: Compare Two Commits** → end-to-end without context menu
-   - Palette → **Diffy: Reopen Last Comparison** → reproduces previous FilePicker
-4. **Package**: `make package` produces a loadable `.vsix`; install in clean VSCode and rerun the manual smoke.
