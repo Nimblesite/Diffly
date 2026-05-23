@@ -29,7 +29,7 @@ const finishRun = (params: {
   stdout: string;
   stderr: string;
 }): Result<string, GitError> => {
-  if (params.code === 0) return ok(params.stdout);
+  if (params.code === 0) {return ok(params.stdout);}
   return err({
     kind: 'nonZeroExit',
     message: `git ${params.subcommand} exited ${params.code ?? '?'}`,

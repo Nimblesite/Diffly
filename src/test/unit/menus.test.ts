@@ -26,7 +26,7 @@ describe('menu manifest — single source of truth', () => {
         COMMAND_TITLES[id] !== undefined,
         `missing title for command ${id}`,
       );
-      assert.match(COMMAND_TITLES[id]!, /^Diffy: /, `title for ${id} must start with "Diffy: "`);
+      assert.match(COMMAND_TITLES[id], /^Diffy: /, `title for ${id} must start with "Diffy: "`);
     }
   });
 

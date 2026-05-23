@@ -43,9 +43,9 @@ describe('formatRelative', () => {
 
 describe('statusBadge', () => {
   it('returns single letter for A/M/D', () => {
-    assert.equal(statusBadge({ status: 'A', path: 'x' } as ChangedFile), 'A');
-    assert.equal(statusBadge({ status: 'M', path: 'x' } as ChangedFile), 'M');
-    assert.equal(statusBadge({ status: 'D', path: 'x' } as ChangedFile), 'D');
+    assert.equal(statusBadge({ status: 'A', path: 'x' }), 'A');
+    assert.equal(statusBadge({ status: 'M', path: 'x' }), 'M');
+    assert.equal(statusBadge({ status: 'D', path: 'x' }), 'D');
   });
 
   it('appends similarity for R', () => {

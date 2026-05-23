@@ -11,7 +11,7 @@ const roundTrip = (rev: DiffyAddressableRev, path: string): void => {
   const uri = buildDiffyUri(rev, path);
   const parsed = parseDiffyUri(uri);
   assert.equal(parsed.ok, true, `parse failed for ${uri}`);
-  if (!parsed.ok) return;
+  if (!parsed.ok) {return;}
   assert.deepEqual(parsed.value.rev, rev);
   assert.equal(parsed.value.path, path);
 };
@@ -53,7 +53,7 @@ describe('parseDiffyUri', () => {
   it('parses a commit URI and decodes the path', () => {
     const r = parseDiffyUri(`diffy://commit/${SHA}/src/file.ts`);
     assert.equal(r.ok, true);
-    if (!r.ok) return;
+    if (!r.ok) {return;}
     assert.deepEqual(r.value.rev, { kind: 'commit', sha: SHA });
     assert.equal(r.value.path, 'src/file.ts');
   });
@@ -61,7 +61,7 @@ describe('parseDiffyUri', () => {
   it('parses an index URI and decodes the path', () => {
     const r = parseDiffyUri('diffy://index/src/file.ts');
     assert.equal(r.ok, true);
-    if (!r.ok) return;
+    if (!r.ok) {return;}
     assert.deepEqual(r.value.rev, { kind: 'index' });
     assert.equal(r.value.path, 'src/file.ts');
   });
@@ -69,49 +69,49 @@ describe('parseDiffyUri', () => {
   it('rejects a non-diffy scheme', () => {
     const r = parseDiffyUri('file:///some/path.ts');
     assert.equal(r.ok, false);
-    if (!r.ok) assert.equal(r.error.kind, 'invalidScheme');
+    if (!r.ok) {assert.equal(r.error.kind, 'invalidScheme');}
   });
 
   it('rejects an unknown authority', () => {
     const r = parseDiffyUri(`diffy://stash/${SHA}/x.ts`);
     assert.equal(r.ok, false);
-    if (!r.ok) assert.equal(r.error.kind, 'invalidAuthority');
+    if (!r.ok) {assert.equal(r.error.kind, 'invalidAuthority');}
   });
 
   it('rejects a commit URI with no path after the sha', () => {
     const r = parseDiffyUri(`diffy://commit/${SHA}/`);
     assert.equal(r.ok, false);
-    if (!r.ok) assert.equal(r.error.kind, 'emptyPath');
+    if (!r.ok) {assert.equal(r.error.kind, 'emptyPath');}
   });
 
   it('rejects a commit URI with no sha', () => {
     const r = parseDiffyUri('diffy://commit//file.ts');
     assert.equal(r.ok, false);
-    if (!r.ok) assert.equal(r.error.kind, 'missingSha');
+    if (!r.ok) {assert.equal(r.error.kind, 'missingSha');}
   });
 
   it('rejects an index URI with no path', () => {
     const r = parseDiffyUri('diffy://index/');
     assert.equal(r.ok, false);
-    if (!r.ok) assert.equal(r.error.kind, 'emptyPath');
+    if (!r.ok) {assert.equal(r.error.kind, 'emptyPath');}
   });
 
   it('rejects a malformed URI with no scheme separator', () => {
     const r = parseDiffyUri('not-a-uri');
     assert.equal(r.ok, false);
-    if (!r.ok) assert.equal(r.error.kind, 'malformed');
+    if (!r.ok) {assert.equal(r.error.kind, 'malformed');}
   });
 
   it('rejects a URI missing the authority/path slash', () => {
     const r = parseDiffyUri('diffy://commit');
     assert.equal(r.ok, false);
-    if (!r.ok) assert.equal(r.error.kind, 'malformed');
+    if (!r.ok) {assert.equal(r.error.kind, 'malformed');}
   });
 
   it('rejects a URI with malformed percent encoding', () => {
     const r = parseDiffyUri(`diffy://commit/${SHA}/bad%ZZpath.ts`);
     assert.equal(r.ok, false);
-    if (!r.ok) assert.equal(r.error.kind, 'badEncoding');
+    if (!r.ok) {assert.equal(r.error.kind, 'badEncoding');}
   });
 });
 

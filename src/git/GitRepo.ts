@@ -50,8 +50,8 @@ const buildLogArgs = (params: { limit: number; ref?: string }): readonly string[
 
 const buildDiffArgs = ({ from, to }: DiffSides, subcommand: 'name-status' | 'numstat'): readonly string[] => {
   const head = ['diff', `--${subcommand}`, '-z', '--find-renames', '--find-copies'];
-  if (to.kind === 'commit') return [...head, from.sha, to.sha];
-  if (to.kind === 'workingCopy') return [...head, from.sha];
+  if (to.kind === 'commit') {return [...head, from.sha, to.sha];}
+  if (to.kind === 'workingCopy') {return [...head, from.sha];}
   return [...head, from.sha, '--cached'];
 };
 
@@ -60,7 +60,7 @@ const showSpec = ({ rev, path }: ShowArgs): string =>
 
 const trimSha = (stdout: string): Result<Sha, GitError> => {
   const sha = stdout.trim();
-  if (sha.length === 0) return err({ kind: 'parseError', message: 'revParse: empty output' });
+  if (sha.length === 0) {return err({ kind: 'parseError', message: 'revParse: empty output' });}
   return ok(sha);
 };
 

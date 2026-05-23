@@ -39,19 +39,19 @@ export const buildDiffyUri = (rev: DiffyAddressableRev, path: string): string =>
 
 const parseCommitUri = (rest: string): Result<DiffyUriComponents, DiffyUriParseError> => {
   const slash = rest.indexOf(PATH_SEP);
-  if (slash <= 0) return err({ kind: 'missingSha' });
+  if (slash <= 0) {return err({ kind: 'missingSha' });}
   const sha: Sha = rest.slice(0, slash);
   const encodedPath = rest.slice(slash + 1);
-  if (encodedPath === '') return err({ kind: 'emptyPath' });
+  if (encodedPath === '') {return err({ kind: 'emptyPath' });}
   const decoded = decodePath(encodedPath);
-  if (!decoded.ok) return decoded;
+  if (!decoded.ok) {return decoded;}
   return ok({ rev: { kind: 'commit', sha }, path: decoded.value });
 };
 
 const parseIndexUri = (rest: string): Result<DiffyUriComponents, DiffyUriParseError> => {
-  if (rest === '') return err({ kind: 'emptyPath' });
+  if (rest === '') {return err({ kind: 'emptyPath' });}
   const decoded = decodePath(rest);
-  if (!decoded.ok) return decoded;
+  if (!decoded.ok) {return decoded;}
   return ok({ rev: { kind: 'index' }, path: decoded.value });
 };
 
@@ -63,11 +63,11 @@ interface UriSplit {
 
 const splitUri = (uri: string): Result<UriSplit, DiffyUriParseError> => {
   const sep = uri.indexOf(SCHEME_SEP);
-  if (sep < 0) return err({ kind: 'malformed', reason: 'no scheme separator' });
+  if (sep < 0) {return err({ kind: 'malformed', reason: 'no scheme separator' });}
   const scheme = uri.slice(0, sep);
   const afterScheme = uri.slice(sep + SCHEME_SEP.length);
   const firstSlash = afterScheme.indexOf(PATH_SEP);
-  if (firstSlash < 0) return err({ kind: 'malformed', reason: 'no authority/path separator' });
+  if (firstSlash < 0) {return err({ kind: 'malformed', reason: 'no authority/path separator' });}
   return ok({
     scheme,
     authority: afterScheme.slice(0, firstSlash),
@@ -79,11 +79,11 @@ export const parseDiffyUri = (
   uri: string,
 ): Result<DiffyUriComponents, DiffyUriParseError> => {
   const split = splitUri(uri);
-  if (!split.ok) return split;
+  if (!split.ok) {return split;}
   if (split.value.scheme !== SCHEME) {
     return err({ kind: 'invalidScheme', got: split.value.scheme });
   }
-  if (split.value.authority === URI_AUTHORITIES.commit) return parseCommitUri(split.value.rest);
-  if (split.value.authority === URI_AUTHORITIES.index) return parseIndexUri(split.value.rest);
+  if (split.value.authority === URI_AUTHORITIES.commit) {return parseCommitUri(split.value.rest);}
+  if (split.value.authority === URI_AUTHORITIES.index) {return parseIndexUri(split.value.rest);}
   return err({ kind: 'invalidAuthority', got: split.value.authority });
 };
