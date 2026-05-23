@@ -43,13 +43,13 @@ export interface GitRepo {
   revParse(name: string): Promise<Result<Sha, GitError>>;
 }
 
-const buildLogArgs = ({ limit, ref }: { limit: number; ref?: string }): readonly string[] => {
-  const base = ['log', `--max-count=${limit}`, `--format=${GIT_LOG_FORMAT}`, '-z'];
-  return ref === undefined ? base : [...base, ref];
+const buildLogArgs = (params: { limit: number; ref?: string }): readonly string[] => {
+  const base = ['log', `--max-count=${params.limit.toString()}`, `--format=${GIT_LOG_FORMAT}`, '-z'];
+  return params.ref === undefined ? base : [...base, params.ref];
 };
 
 const buildDiffArgs = ({ from, to }: DiffSides, subcommand: 'name-status' | 'numstat'): readonly string[] => {
-  const head = ['diff', `--${subcommand}`, '-z'];
+  const head = ['diff', `--${subcommand}`, '-z', '--find-renames', '--find-copies'];
   if (to.kind === 'commit') return [...head, from.sha, to.sha];
   if (to.kind === 'workingCopy') return [...head, from.sha];
   return [...head, from.sha, '--cached'];
@@ -73,7 +73,10 @@ export const createGitRepo = ({
 }): GitRepo => ({
   log: async (args = {}) => {
     const limit = args.limit ?? DEFAULT_LOG_LIMIT;
-    const r = await runner.run({ args: buildLogArgs({ limit, ref: args.ref }), cwd });
+    const logArgs = args.ref === undefined
+      ? buildLogArgs({ limit })
+      : buildLogArgs({ limit, ref: args.ref });
+    const r = await runner.run({ args: logArgs, cwd });
     return andThen(r, parseLog);
   },
   nameStatus: async (args) => {
@@ -87,7 +90,7 @@ export const createGitRepo = ({
   show: (args) => runner.run({ args: ['show', showSpec(args)], cwd }),
   refs: async () => {
     const r = await runner.run({
-      args: ['for-each-ref', '-z', `--format=${REFS_FORMAT}`],
+      args: ['for-each-ref', `--format=${REFS_FORMAT}`],
       cwd,
     });
     return andThen(r, parseRefs);

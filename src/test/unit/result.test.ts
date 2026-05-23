@@ -78,7 +78,7 @@ describe('Result', () => {
 
     it('passes Err through unchanged', () => {
       const original: Result<number, string> = err('bad');
-      const r = map(original, (n) => n * 3);
+      const r = map<number, number, string>(original, (n) => n * 3);
       assert.equal(r.ok, false);
       if (!r.ok) assert.equal(r.error, 'bad');
     });

@@ -1,4 +1,4 @@
-import { NUL, TAB, REF_PREFIX_HEADS, REF_PREFIX_TAGS } from '../constants';
+import { NUL, TAB, LF, REF_PREFIX_HEADS, REF_PREFIX_TAGS } from '../constants';
 import { type Result, ok, err } from '../result';
 import type {
   ChangedFile,
@@ -228,13 +228,14 @@ const parseRefRecord = (fields: readonly string[]): Result<Ref, GitError> => {
 
 export const parseRefs = (stdout: string): Result<readonly Ref[], GitError> => {
   if (stdout.length === 0) return ok([]);
-  const tokens = stripTrailingEmpty(stdout.split(NUL));
-  if (tokens.length % REF_FIELDS_PER_RECORD !== 0) {
-    return errParse('parseRefs: field count not multiple of 3');
-  }
+  const lines = stdout.split(LF).filter((l) => l.length > 0);
   const refs: Ref[] = [];
-  for (let i = 0; i < tokens.length; i += REF_FIELDS_PER_RECORD) {
-    const r = parseRefRecord(tokens.slice(i, i + REF_FIELDS_PER_RECORD));
+  for (const line of lines) {
+    const fields = line.split(NUL);
+    if (fields.length !== REF_FIELDS_PER_RECORD) {
+      return errParse('parseRefs: expected 3 NUL-separated fields per line');
+    }
+    const r = parseRefRecord(fields);
     if (!r.ok) return r;
     refs.push(r.value);
   }

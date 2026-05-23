@@ -303,8 +303,8 @@ describe('parseRefs', () => {
     if (r.ok) assert.deepEqual(r.value, []);
   });
 
-  it('parses a branch ref', () => {
-    const r = parseRefs(`refs/heads/main${NUL}main${NUL}abc1234${NUL}`);
+  it('parses a branch ref (newline-terminated record)', () => {
+    const r = parseRefs(`refs/heads/main${NUL}main${NUL}abc1234\n`);
     assert.equal(r.ok, true);
     if (!r.ok) return;
     assert.deepEqual(r.value, [
@@ -313,7 +313,7 @@ describe('parseRefs', () => {
   });
 
   it('parses a tag ref', () => {
-    const r = parseRefs(`refs/tags/v1.0${NUL}v1.0${NUL}def5678${NUL}`);
+    const r = parseRefs(`refs/tags/v1.0${NUL}v1.0${NUL}def5678\n`);
     assert.equal(r.ok, true);
     if (!r.ok) return;
     assert.deepEqual(r.value, [
@@ -322,16 +322,16 @@ describe('parseRefs', () => {
   });
 
   it('classifies a non-branch, non-tag ref as other', () => {
-    const r = parseRefs(`refs/remotes/origin/main${NUL}origin/main${NUL}abc1234${NUL}`);
+    const r = parseRefs(`refs/remotes/origin/main${NUL}origin/main${NUL}abc1234\n`);
     assert.equal(r.ok, true);
     if (r.ok) assert.equal(r.value[0]?.type, 'other');
   });
 
   it('parses a mixed batch of branches and tags', () => {
     const stdout =
-      `refs/heads/main${NUL}main${NUL}aaa${NUL}` +
-      `refs/heads/dev${NUL}dev${NUL}bbb${NUL}` +
-      `refs/tags/v1.0${NUL}v1.0${NUL}ccc${NUL}`;
+      `refs/heads/main${NUL}main${NUL}aaa\n` +
+      `refs/heads/dev${NUL}dev${NUL}bbb\n` +
+      `refs/tags/v1.0${NUL}v1.0${NUL}ccc\n`;
     const r = parseRefs(stdout);
     assert.equal(r.ok, true);
     if (!r.ok) return;
@@ -341,15 +341,21 @@ describe('parseRefs', () => {
     assert.equal(r.value[2]?.type, 'tag');
   });
 
-  it('errors when field count is not a multiple of 3', () => {
-    const r = parseRefs(`refs/heads/main${NUL}main${NUL}`);
+  it('errors when a line has fewer than 3 NUL-separated fields', () => {
+    const r = parseRefs(`refs/heads/main${NUL}main\n`);
     assert.equal(r.ok, false);
-    if (!r.ok) assert.match(r.error.message, /multiple of 3/);
+    if (!r.ok) assert.match(r.error.message, /3 NUL-separated/);
   });
 
   it('errors when a ref field is empty', () => {
-    const r = parseRefs(`refs/heads/main${NUL}${NUL}abc${NUL}`);
+    const r = parseRefs(`refs/heads/main${NUL}${NUL}abc\n`);
     assert.equal(r.ok, false);
     if (!r.ok) assert.match(r.error.message, /empty field/);
+  });
+
+  it('ignores trailing blank lines', () => {
+    const r = parseRefs(`refs/heads/main${NUL}main${NUL}abc\n\n\n`);
+    assert.equal(r.ok, true);
+    if (r.ok) assert.equal(r.value.length, 1);
   });
 });
