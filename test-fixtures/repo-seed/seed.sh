@@ -50,6 +50,10 @@ git commit -q -m "third: rename b -> b2 and extend"
 # Tag commit 2 so RefPicker has at least one tag to pick from
 git tag v0.1.0 HEAD~1
 
+# Second branch at commit 2 so RefPicker has a non-current branch to pick
+# (current branch is excluded — comparing main↔main makes no sense).
+git branch feature HEAD~1
+
 # Leave a working-copy edit on a.txt so 'compare with Working Copy' has content
 printf 'a.txt v2 edited\nsecond line v1\nthird line added\nworking copy uncommitted\n' > a.txt
 

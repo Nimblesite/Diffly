@@ -205,8 +205,8 @@ describe('Diffy commands — end-to-end through real QuickPick UI', () => {
     // pickRef is item 4 → moveNext × 3
     await moveAndAccept(3);
 
-    // RefPicker: alphabetical — refs/heads/main first, refs/tags/v0.1.0 second
-    // Pick the v0.1.0 tag (item 2) → moveNext × 1
+    // RefPicker (current branch `main` excluded): refs/heads/feature first,
+    // refs/tags/v0.1.0 second. Pick v0.1.0 → moveNext × 1.
     await moveAndAccept(1);
 
     // FilePicker
@@ -377,13 +377,14 @@ describe('Diffy commands — end-to-end through real QuickPick UI', () => {
     await flow;
   });
 
-  it('compareWithBranch(historyItem={id:sha1}) → branch-filtered RefPicker → diff vs main(=sha3)', async () => {
+  it('compareWithBranch(historyItem={id:sha1}) → branch-filtered RefPicker hides current branch `main` → diff vs feature(=sha2)', async () => {
     const shas = readSeedShas();
     const flow = vscode.commands.executeCommand(COMMAND_IDS.compareWithBranch, {
       id: shas.first,
     });
 
-    // RefPicker with branch filter shows only "main" → accept top
+    // RefPicker with branch filter: current branch `main` is hidden, leaving
+    // only `feature` (at sha2). Accept top.
     await accept();
     // FilePicker top
     await accept();
@@ -393,10 +394,10 @@ describe('Diffy commands — end-to-end through real QuickPick UI', () => {
     assert.equal(uris.left.scheme, 'diffy');
     assert.equal(uris.right.scheme, 'diffy');
     assert.match(uris.left.toString(), new RegExp(`diffy://commit/${shas.first}/`));
-    assert.match(uris.right.toString(), new RegExp(`diffy://commit/${shas.third}/`));
+    assert.match(uris.right.toString(), new RegExp(`diffy://commit/${shas.second}/`));
     assert.match(
       labelStrings(diffTab),
-      new RegExp(`^${shas.first.slice(0, 7)} ↔ ${shas.third.slice(0, 7)} — `),
+      new RegExp(`^${shas.first.slice(0, 7)} ↔ ${shas.second.slice(0, 7)} — `),
     );
 
     await dismissQuickPick();
@@ -443,23 +444,24 @@ describe('Diffy commands — end-to-end through real QuickPick UI', () => {
     assert.equal(allDiffTabs().length, before);
   });
 
-  it('compareFileWithBranch(uri:a.txt) → RefPicker shows only branches → diff opens for branch HEAD vs working copy', async () => {
+  it('compareFileWithBranch(uri:a.txt) → branch RefPicker hides current branch → diff opens for feature(=sha2) vs working copy', async () => {
     const shas = readSeedShas();
     const aTxt = vscode.Uri.file(`${workspaceRoot()}/a.txt`);
     const flow = vscode.commands.executeCommand(COMMAND_IDS.compareFileWithBranch, aTxt);
 
-    // RefPicker with branch filter shows only "main" → accept
+    // RefPicker with branch filter hides the current branch `main`, leaving
+    // only `feature` (at sha2). Accept.
     await accept();
 
     const diffTab = await waitForDiffTab();
     const uris = tabInputUris(diffTab);
     assert.equal(uris.left.scheme, 'diffy');
-    assert.match(uris.left.toString(), new RegExp(`diffy://commit/${shas.third}/a\\.txt$`));
+    assert.match(uris.left.toString(), new RegExp(`diffy://commit/${shas.second}/a\\.txt$`));
     assert.equal(uris.right.scheme, 'file');
     assert.match(uris.right.fsPath, /a\.txt$/);
     assert.match(
       labelStrings(diffTab),
-      new RegExp(`^${shas.third.slice(0, 7)} ↔ Working Copy — a\\.txt$`),
+      new RegExp(`^${shas.second.slice(0, 7)} ↔ Working Copy — a\\.txt$`),
     );
 
     await flow;

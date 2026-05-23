@@ -27,6 +27,7 @@ const GIT_OPS = {
   log: 'log',
   diffNameStatus: 'diff --name-status',
   diffNumstat: 'diff --numstat',
+  currentBranch: 'current branch',
 } as const;
 
 export const reportGitError = ({
@@ -79,6 +80,23 @@ const placeholderForRefFilter = (filter?: RefType): string => {
   return UI_TEXT.pickRefPlaceholder;
 };
 
+const resolveExcludeBranchName = async ({
+  repo,
+  output,
+}: {
+  repo: GitRepo;
+  output: vscode.OutputChannel;
+}): Promise<string | undefined> => {
+  const r = await repo.currentBranch();
+  if (!r.ok) {
+    // Best-effort: log and continue with no exclusion. A failed lookup must not
+    // block ref picking — the worst case is the user sees their own branch.
+    reportGitError({ output, op: GIT_OPS.currentBranch, e: r.error });
+    return undefined;
+  }
+  return r.value;
+};
+
 export const pickRefAsSha = async ({
   repo,
   output,
@@ -93,10 +111,13 @@ export const pickRefAsSha = async ({
     reportGitError({ output, op: GIT_OPS.listRefs, e: refs.error });
     return err(CANCELLED);
   }
-  const args = filter === undefined
-    ? { refs: refs.value, placeholder: placeholderForRefFilter() }
-    : { refs: refs.value, placeholder: placeholderForRefFilter(filter), filter };
-  const picked = await pickRef(args);
+  const excludeBranchName = await resolveExcludeBranchName({ repo, output });
+  const picked = await pickRef({
+    refs: refs.value,
+    placeholder: placeholderForRefFilter(filter),
+    filter,
+    excludeBranchName,
+  });
   if (!picked.ok) {
     return err(CANCELLED);
   }

@@ -1,5 +1,5 @@
 import { DEFAULT_LOG_LIMIT, GIT_LOG_FORMAT, REFS_FORMAT } from '../constants';
-import { type Result, ok, err, andThen } from '../result';
+import { type Result, ok, err, andThen, map } from '../result';
 import type { GitRunner } from './GitRunner';
 import {
   parseLog,
@@ -41,6 +41,7 @@ export interface GitRepo {
   show: (args: ShowArgs) => Promise<Result<string, GitError>>;
   refs: () => Promise<Result<readonly Ref[], GitError>>;
   revParse: (name: string) => Promise<Result<Sha, GitError>>;
+  currentBranch: () => Promise<Result<string | undefined, GitError>>;
 }
 
 const buildLogArgs = (params: { limit: number; ref?: string }): readonly string[] => {
@@ -98,5 +99,12 @@ export const createGitRepo = ({
   revParse: async (name) => {
     const r = await runner.run({ args: ['rev-parse', '--verify', name], cwd });
     return andThen(r, trimSha);
+  },
+  currentBranch: async () => {
+    const r = await runner.run({ args: ['branch', '--show-current'], cwd });
+    return map(r, (stdout) => {
+      const name = stdout.trim();
+      return name.length === 0 ? undefined : name;
+    });
   },
 });

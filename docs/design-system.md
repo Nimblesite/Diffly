@@ -58,32 +58,43 @@ Example body copy:
 
 The Diffy mark should communicate comparison, pairing, and code review without looking like a separate IDE.
 
-Source assets:
+The current logo set is raster-only. There is no SVG source for these assets. Each icon is built from flat geometric shapes, hard color boundaries, and no text, so a future vector conversion can trace the shapes cleanly.
 
-- [Mark SVG](assets/diffy-mark.svg)
-- [Logo SVG](assets/diffy-logo.svg)
-- [128px mark PNG](assets/diffy-mark-128.png)
-- [256px mark PNG](assets/diffy-mark-256.png)
-- [768px logo PNG](assets/diffy-logo-768.png)
-- Root extension icon: `icon.png`
+Current assets:
+
+| Asset                                                      | Format | Use                          |
+| ---------------------------------------------------------- | ------ | ---------------------------- |
+| [Contact sheet](assets/diffy-icon-contact-sheet.png)       | PNG    | Compare all current concepts |
+| [Contact sheet WebP](assets/diffy-icon-contact-sheet.webp) | WebP   | Lightweight concept preview  |
+| [Primary 128](assets/diffy-icon-primary-128.png)           | PNG    | Root extension icon source   |
+| [Primary 256](assets/diffy-icon-primary-256.png)           | PNG    | Marketplace and docs         |
+| [Primary 512](assets/diffy-icon-primary-512.png)           | PNG    | High-resolution export       |
+| [Primary WebP](assets/diffy-icon-primary.webp)             | WebP   | Website asset                |
+| [Brackets WebP](assets/diffy-icon-brackets.webp)           | WebP   | Alternate concept            |
+| [Panes WebP](assets/diffy-icon-panes.webp)                 | WebP   | Alternate concept            |
+| [Delta WebP](assets/diffy-icon-delta.webp)                 | WebP   | Alternate concept            |
+| [Gutter WebP](assets/diffy-icon-gutter.webp)               | WebP   | Alternate concept            |
+| Root extension icon: `icon.png`                            | PNG    | VS Code package icon         |
 
 Preferred concepts:
 
-- Two adjacent file panes with a narrow comparison gutter.
-- A compact `D` monogram split into left and right halves.
-- A restrained angle-bracket or bracket motif that suggests code without becoming a generic developer logo.
+- Opposing panes, brackets, or angled halves that imply Side A vs Side B.
+- A clear central gutter or compare rail.
+- Flat shapes with enough negative space to survive at 16px.
+- One primary brand accent plus optional semantic diff accents.
 
 Do:
 
-- Keep the icon readable at 16px, 32px, and 128px.
-- Prefer a simple geometric shape with one accent color.
+- Keep icons readable at 16px, 32px, 128px, and 256px.
+- Use flat fills, crisp geometry, and limited color counts.
 - Test against light, dark, and marketplace backgrounds.
+- Keep icon variants text-free.
 
 Do not:
 
 - Use VS Code product marks or GitHub marks as part of the logo.
 - Build the mark around a custom sidebar, panel, activity icon, or webview concept.
-- Use a complex multi-color illustration for the extension icon.
+- Use gradients, shadows, texture, tiny line art, or photo-like detail in extension icons.
 
 ## Color
 
