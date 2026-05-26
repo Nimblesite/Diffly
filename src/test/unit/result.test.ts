@@ -122,22 +122,16 @@ describe("Result", () => {
   describe("expectOk / expectErr negative paths", () => {
     it("expectOk throws with the JSON-serialized error when given an Err", () => {
       const r: Result<number, { kind: string }> = err({ kind: "explode" });
-      assert.throws(
-        () => {
-          expectOk(r);
-        },
-        /expected Ok, got Err: \{"kind":"explode"\}/,
-      );
+      assert.throws(() => {
+        expectOk(r);
+      }, /expected Ok, got Err: \{"kind":"explode"\}/);
     });
 
     it("expectErr throws with the JSON-serialized value when given an Ok", () => {
       const r: Result<{ n: number }, string> = ok({ n: 7 });
-      assert.throws(
-        () => {
-          expectErr(r);
-        },
-        /expected Err, got Ok: \{"n":7\}/,
-      );
+      assert.throws(() => {
+        expectErr(r);
+      }, /expected Err, got Ok: \{"n":7\}/);
     });
   });
 });
