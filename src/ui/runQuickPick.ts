@@ -1,6 +1,6 @@
-import * as vscode from 'vscode';
-import { type Result, err, ok } from '../result';
-import { CANCELLED, type Cancelled } from './cancelled';
+import * as vscode from "vscode";
+import { type Result, err, ok } from "../result";
+import { CANCELLED, type Cancelled } from "./cancelled";
 
 export interface QuickPickConfig<T extends vscode.QuickPickItem> {
   readonly items: readonly T[];
@@ -10,9 +10,7 @@ export interface QuickPickConfig<T extends vscode.QuickPickItem> {
   readonly ignoreFocusOut?: boolean;
 }
 
-const createConfiguredPicker = <T extends vscode.QuickPickItem>(
-  config: QuickPickConfig<T>,
-): vscode.QuickPick<T> => {
+const createConfiguredPicker = <T extends vscode.QuickPickItem>(config: QuickPickConfig<T>): vscode.QuickPick<T> => {
   const qp = vscode.window.createQuickPick<T>();
   qp.placeholder = config.placeholder;
   qp.matchOnDescription = config.matchOnDescription ?? false;
@@ -23,7 +21,7 @@ const createConfiguredPicker = <T extends vscode.QuickPickItem>(
 };
 
 export const showSinglePick = async <T extends vscode.QuickPickItem>(
-  config: QuickPickConfig<T>,
+  config: QuickPickConfig<T>
 ): Promise<Result<T, Cancelled>> =>
   await new Promise<Result<T, Cancelled>>((resolve) => {
     const qp = createConfiguredPicker(config);
@@ -48,7 +46,7 @@ export const showSinglePick = async <T extends vscode.QuickPickItem>(
 
 export const showStayOpenPick = async <T extends vscode.QuickPickItem>(
   config: QuickPickConfig<T>,
-  onPick: (item: T) => void | Promise<void>,
+  onPick: (item: T) => void | Promise<void>
 ): Promise<void> => {
   await new Promise<void>((resolve) => {
     const qp = createConfiguredPicker({ ...config, ignoreFocusOut: true });

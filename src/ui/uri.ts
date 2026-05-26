@@ -1,11 +1,6 @@
-import {
-  REV_KINDS,
-  SCHEME,
-  URI_AUTHORITIES,
-  URI_PARSE_ERROR_KINDS,
-} from '../constants';
-import { type Result, ok, err } from '../result';
-import type { DiffyAddressableRev, Sha } from '../git/types';
+import { REV_KINDS, SCHEME, URI_AUTHORITIES, URI_PARSE_ERROR_KINDS } from "../constants";
+import { type Result, ok, err } from "../result";
+import type { DiffyAddressableRev, Sha } from "../git/types";
 
 export type DiffyUriParseError =
   | {
@@ -32,11 +27,10 @@ export interface DiffyUriComponents {
   readonly path: string;
 }
 
-const SCHEME_SEP = '://';
-const PATH_SEP = '/';
+const SCHEME_SEP = "://";
+const PATH_SEP = "/";
 
-const encodePath = (path: string): string =>
-  path.split(PATH_SEP).map(encodeURIComponent).join(PATH_SEP);
+const encodePath = (path: string): string => path.split(PATH_SEP).map(encodeURIComponent).join(PATH_SEP);
 
 const decodePath = (encoded: string): Result<string, DiffyUriParseError> => {
   try {
@@ -54,16 +48,14 @@ export const buildDiffyUri = (rev: DiffyAddressableRev, path: string): string =>
   return `${SCHEME}${SCHEME_SEP}${URI_AUTHORITIES.index}/${encoded}`;
 };
 
-const parseCommitUri = (
-  rest: string,
-): Result<DiffyUriComponents, DiffyUriParseError> => {
+const parseCommitUri = (rest: string): Result<DiffyUriComponents, DiffyUriParseError> => {
   const slash = rest.indexOf(PATH_SEP);
   if (slash <= 0) {
     return err({ kind: URI_PARSE_ERROR_KINDS.missingSha });
   }
   const sha: Sha = rest.slice(0, slash);
   const encodedPath = rest.slice(slash + 1);
-  if (encodedPath === '') {
+  if (encodedPath === "") {
     return err({ kind: URI_PARSE_ERROR_KINDS.emptyPath });
   }
   const decoded = decodePath(encodedPath);
@@ -73,10 +65,8 @@ const parseCommitUri = (
   return ok({ rev: { kind: REV_KINDS.commit, sha }, path: decoded.value });
 };
 
-const parseIndexUri = (
-  rest: string,
-): Result<DiffyUriComponents, DiffyUriParseError> => {
-  if (rest === '') {
+const parseIndexUri = (rest: string): Result<DiffyUriComponents, DiffyUriParseError> => {
+  if (rest === "") {
     return err({ kind: URI_PARSE_ERROR_KINDS.emptyPath });
   }
   const decoded = decodePath(rest);
@@ -97,7 +87,7 @@ const splitUri = (uri: string): Result<UriSplit, DiffyUriParseError> => {
   if (sep < 0) {
     return err({
       kind: URI_PARSE_ERROR_KINDS.malformed,
-      reason: 'no scheme separator',
+      reason: "no scheme separator",
     });
   }
   const scheme = uri.slice(0, sep);
@@ -106,7 +96,7 @@ const splitUri = (uri: string): Result<UriSplit, DiffyUriParseError> => {
   if (firstSlash < 0) {
     return err({
       kind: URI_PARSE_ERROR_KINDS.malformed,
-      reason: 'no authority/path separator',
+      reason: "no authority/path separator",
     });
   }
   return ok({
@@ -116,9 +106,7 @@ const splitUri = (uri: string): Result<UriSplit, DiffyUriParseError> => {
   });
 };
 
-export const parseDiffyUri = (
-  uri: string,
-): Result<DiffyUriComponents, DiffyUriParseError> => {
+export const parseDiffyUri = (uri: string): Result<DiffyUriComponents, DiffyUriParseError> => {
   const split = splitUri(uri);
   if (!split.ok) {
     return split;

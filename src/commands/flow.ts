@@ -1,52 +1,35 @@
-import * as vscode from 'vscode';
-import {
-  LOG_EVENTS,
-  REF_TYPES,
-  REV_KINDS,
-  SIDE_B_KINDS,
-  TITLE_PREFIX,
-  UI_TEXT,
-} from '../constants';
-import type { GitRepo } from '../git/GitRepo';
-import type { GitRunner } from '../git/GitRunner';
-import type { GitApi } from '../vscodeGitApi';
-import type { GitError, CommitRev, RefType, RevSpec, Sha } from '../git/types';
-import { logger } from '../logger';
-import { type Result, err, ok } from '../result';
-import { CANCELLED, type Cancelled } from '../ui/cancelled';
-import { pickCommit } from '../ui/CommitPicker';
-import { pickRef } from '../ui/RefPicker';
-import { pickSideBChoice, type SideBChoice } from '../ui/SideBPicker';
-import { mergeChangedFilesWithStats, pickFiles } from '../ui/FilePicker';
-import type { MementoStore } from '../state';
-import { buildRepo, openDiff, pickRepoFrom } from './shared';
+import * as vscode from "vscode";
+import { LOG_EVENTS, REF_TYPES, REV_KINDS, SIDE_B_KINDS, TITLE_PREFIX, UI_TEXT } from "../constants";
+import type { GitRepo } from "../git/GitRepo";
+import type { GitRunner } from "../git/GitRunner";
+import type { GitApi } from "../vscodeGitApi";
+import type { GitError, CommitRev, RefType, RevSpec, Sha } from "../git/types";
+import { logger } from "../logger";
+import { type Result, err, ok } from "../result";
+import { CANCELLED, type Cancelled } from "../ui/cancelled";
+import { pickCommit } from "../ui/CommitPicker";
+import { pickRef } from "../ui/RefPicker";
+import { pickSideBChoice, type SideBChoice } from "../ui/SideBPicker";
+import { mergeChangedFilesWithStats, pickFiles } from "../ui/FilePicker";
+import type { MementoStore } from "../state";
+import { buildRepo, openDiff, pickRepoFrom } from "./shared";
 
 const GIT_OPS = {
-  listRefs: 'list refs',
-  revParse: 'rev-parse',
-  log: 'log',
-  diffNameStatus: 'diff --name-status',
-  diffNumstat: 'diff --numstat',
-  currentBranch: 'current branch',
+  listRefs: "list refs",
+  revParse: "rev-parse",
+  log: "log",
+  diffNameStatus: "diff --name-status",
+  diffNumstat: "diff --numstat",
+  currentBranch: "current branch",
 } as const;
 
-export const reportGitError = ({
-  output,
-  op,
-  e,
-}: {
-  output: vscode.OutputChannel;
-  op: string;
-  e: GitError;
-}): void => {
+export const reportGitError = ({ output, op, e }: { output: vscode.OutputChannel; op: string; e: GitError }): void => {
   logger.error({ op, kind: e.kind }, LOG_EVENTS.gitError);
   output.appendLine(`${TITLE_PREFIX} ${op} failed ${UI_TEXT.pathDash} ${e.message}`);
-  if (e.stderr !== undefined && e.stderr !== '') {
+  if (e.stderr !== undefined && e.stderr !== "") {
     output.appendLine(e.stderr);
   }
-  void vscode.window.showErrorMessage(
-    `${TITLE_PREFIX} ${op} failed (see Output → Diffy).`,
-  );
+  void vscode.window.showErrorMessage(`${TITLE_PREFIX} ${op} failed (see Output → Diffy).`);
 };
 
 export const resolveSideB = async ({
@@ -202,8 +185,9 @@ export const drillIntoFiles = async ({
   await state.setLastComparison({ revA, revB, repoRoot });
   await pickFiles({
     entries,
-    onPick: async (entry) =>
-      { await openDiff({ revA, revB, repoRoot, relPath: entry.file.path }); },
+    onPick: async (entry) => {
+      await openDiff({ revA, revB, repoRoot, relPath: entry.file.path });
+    },
   });
 };
 

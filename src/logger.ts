@@ -1,7 +1,7 @@
-import pino, { type Logger as PinoLogger, type Level, multistream } from 'pino';
-import { LOG_LEVELS } from './constants';
+import pino, { type Logger as PinoLogger, type Level, multistream } from "pino";
+import { LOG_LEVELS } from "./constants";
 
-const ENV_LOG_LEVEL_VAR = 'DIFFY_LOG_LEVEL';
+const ENV_LOG_LEVEL_VAR = "DIFFY_LOG_LEVEL";
 
 export interface Logger {
   trace: (fields: object, msg?: string) => void;
@@ -27,9 +27,7 @@ const buildPino = (): PinoLogger =>
       base: null,
       timestamp: pino.stdTimeFunctions.isoTime,
     },
-    multistream(
-      streams.map((s) => ({ stream: s.stream, level: s.level ?? LOG_LEVELS.trace })),
-    ),
+    multistream(streams.map((s) => ({ stream: s.stream, level: s.level ?? LOG_LEVELS.trace })))
   );
 
 let underlying: PinoLogger = buildPino();

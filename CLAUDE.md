@@ -19,7 +19,7 @@ Full design + execution plan: [spec.md](spec.md).
 
 **Diffy** is a VSCode extension that does exactly one thing: **pick two things and diff them** against a git repository. Side A is a commit; Side B is another commit, the working copy, the index, or a branch/tag (resolved to a commit). It shells out to `git`, hands two URIs to VSCode's built-in `vscode.diff`, and uses a multi-step QuickPick for browsing many changed files. No custom renderer, no custom view.
 
-**Primary language:** TypeScript (pure — Rust LSP was considered and rejected; LSP is for *language* semantics, not diffing)
+**Primary language:** TypeScript (pure — Rust LSP was considered and rejected; LSP is for _language_ semantics, not diffing)
 **Build command:** `make ci`
 **Test command:** `make test`
 **Lint command:** `make lint`
@@ -45,7 +45,7 @@ context-menu / palette command
 
 ## Hard Rules (no exceptions, NON-NEGOTIABLE)
 
-- **NO git commands from the agent.** No `git add`, `commit`, `push`, `checkout`, `merge`, `rebase`. CI and GitHub Actions handle git. (Diffy itself shells out to `git` at runtime — that's the product. The *agent* doesn't drive git in the dev loop.)
+- **NO git commands from the agent.** No `git add`, `commit`, `push`, `checkout`, `merge`, `rebase`. CI and GitHub Actions handle git. (Diffy itself shells out to `git` at runtime — that's the product. The _agent_ doesn't drive git in the dev loop.)
 - **NO new views, sidebars, activity-bar icons, tree providers, or webviews.** Context menus + palette commands only. Browsing many files is a QuickPick, not a panel.
 - **NO THROWING EXCEPTIONS for control flow.** Return `Result<T,E>` via a discriminated union. Panics are bugs.
 - **NO REGEX on structured data.** Git porcelain output is parsed via NUL-delimited splits (`-z` flag everywhere). Never regex over JSON, YAML, source code, or git output.
@@ -102,15 +102,17 @@ context-menu / palette command
 Do not write assertions that guard against AI / taxonomy strings. Assert on **positive, human-readable values** that the user would actually see.
 
 ⛔️ BAD
+
 ```typescript
 assert.doesNotMatch(label, /\[diffy-internal-tag\]/);
 ```
 
 ✅ GOOD
+
 ```typescript
-const tabs = vscode.window.tabGroups.all.flatMap(g => g.tabs);
-const diffTab = tabs.find(t => t.input instanceof vscode.TabInputTextDiff);
-assert.ok(diffTab, 'a diff tab opened');
+const tabs = vscode.window.tabGroups.all.flatMap((g) => g.tabs);
+const diffTab = tabs.find((t) => t.input instanceof vscode.TabInputTextDiff);
+assert.ok(diffTab, "a diff tab opened");
 assert.match(diffTab.label, /a1b2c3 ↔ Working Copy/);
 ```
 

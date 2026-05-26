@@ -1,25 +1,13 @@
-import * as vscode from 'vscode';
-import { TITLE_PREFIX } from '../constants';
-import type { MementoStore } from '../state';
-import { extractHistoryItemSha } from './historyItem';
-import {
-  type CommandDeps,
-  buildRepo,
-  pickRepoFrom,
-} from './shared';
-import {
-  drillIntoFiles,
-  pickSideBAndResolve,
-  sideAFromSha,
-} from './flow';
+import * as vscode from "vscode";
+import { TITLE_PREFIX } from "../constants";
+import type { MementoStore } from "../state";
+import { extractHistoryItemSha } from "./historyItem";
+import { type CommandDeps, buildRepo, pickRepoFrom } from "./shared";
+import { drillIntoFiles, pickSideBAndResolve, sideAFromSha } from "./flow";
 
-const NOT_FROM_HISTORY =
-  `${TITLE_PREFIX} this command must be invoked from the SCM history view.`;
+const NOT_FROM_HISTORY = `${TITLE_PREFIX} this command must be invoked from the SCM history view.`;
 
-const handler = async (
-  deps: CommandDeps & { readonly state: MementoStore },
-  arg: unknown,
-): Promise<void> => {
+const handler = async (deps: CommandDeps & { readonly state: MementoStore }, arg: unknown): Promise<void> => {
   const sha = extractHistoryItemSha(arg);
   if (sha === undefined) {
     void vscode.window.showWarningMessage(NOT_FROM_HISTORY);
@@ -44,7 +32,8 @@ const handler = async (
   });
 };
 
-export const makeCompareWith = (
-  deps: CommandDeps & { readonly state: MementoStore },
-) =>
-  async (arg: unknown): Promise<void> => { await handler(deps, arg); };
+export const makeCompareWith =
+  (deps: CommandDeps & { readonly state: MementoStore }) =>
+  async (arg: unknown): Promise<void> => {
+    await handler(deps, arg);
+  };

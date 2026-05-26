@@ -1,4 +1,4 @@
-import { UI_TEXT } from '../../constants';
+import { UI_TEXT } from "../../constants";
 
 const SECONDS_PER_MINUTE = 60;
 const MINUTES_PER_HOUR = 60;

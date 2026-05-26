@@ -1,7 +1,7 @@
-import type * as vscode from 'vscode';
-import { MEMENTO_KEYS } from './constants';
-import type { REV_KINDS } from './constants';
-import type { RevSpec, Sha } from './git/types';
+import type * as vscode from "vscode";
+import { MEMENTO_KEYS } from "./constants";
+import type { REV_KINDS } from "./constants";
+import type { RevSpec, Sha } from "./git/types";
 
 export interface LastComparison {
   readonly revA: { readonly kind: typeof REV_KINDS.commit; readonly sha: Sha };
@@ -16,16 +16,16 @@ export interface MementoStore {
 }
 
 export const isLastComparison = (raw: unknown): raw is LastComparison => {
-  if (typeof raw !== 'object' || raw === null) {
+  if (typeof raw !== "object" || raw === null) {
     return false;
   }
-  if (!('repoRoot' in raw) || typeof raw.repoRoot !== 'string') {
+  if (!("repoRoot" in raw) || typeof raw.repoRoot !== "string") {
     return false;
   }
-  if (!('revA' in raw) || typeof raw.revA !== 'object' || raw.revA === null) {
+  if (!("revA" in raw) || typeof raw.revA !== "object" || raw.revA === null) {
     return false;
   }
-  if (!('revB' in raw) || typeof raw.revB !== 'object' || raw.revB === null) {
+  if (!("revB" in raw) || typeof raw.revB !== "object" || raw.revB === null) {
     return false;
   }
   return true;

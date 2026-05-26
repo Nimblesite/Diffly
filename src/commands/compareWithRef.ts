@@ -1,17 +1,12 @@
-import * as vscode from 'vscode';
-import { REV_KINDS, TITLE_PREFIX } from '../constants';
-import type { RefType } from '../git/types';
-import type { MementoStore } from '../state';
-import { extractHistoryItemSha } from './historyItem';
-import {
-  type CommandDeps,
-  buildRepo,
-  pickRepoFrom,
-} from './shared';
-import { drillIntoFiles, pickRefAsSha, sideAFromSha } from './flow';
+import * as vscode from "vscode";
+import { REV_KINDS, TITLE_PREFIX } from "../constants";
+import type { RefType } from "../git/types";
+import type { MementoStore } from "../state";
+import { extractHistoryItemSha } from "./historyItem";
+import { type CommandDeps, buildRepo, pickRepoFrom } from "./shared";
+import { drillIntoFiles, pickRefAsSha, sideAFromSha } from "./flow";
 
-const NOT_FROM_HISTORY =
-  `${TITLE_PREFIX} this command must be invoked from the SCM history view.`;
+const NOT_FROM_HISTORY = `${TITLE_PREFIX} this command must be invoked from the SCM history view.`;
 
 const handler = async ({
   deps,
@@ -46,11 +41,8 @@ const handler = async ({
   });
 };
 
-export const makeCompareWithRef = ({
-  deps,
-  filter,
-}: {
-  deps: CommandDeps & { readonly state: MementoStore };
-  filter: RefType;
-}) =>
-  async (arg: unknown): Promise<void> => { await handler({ deps, arg, filter }); };
+export const makeCompareWithRef =
+  ({ deps, filter }: { deps: CommandDeps & { readonly state: MementoStore }; filter: RefType }) =>
+  async (arg: unknown): Promise<void> => {
+    await handler({ deps, arg, filter });
+  };

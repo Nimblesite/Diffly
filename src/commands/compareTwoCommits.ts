@@ -1,15 +1,9 @@
-import type { MementoStore } from '../state';
-import type { CommandDeps } from './shared';
-import {
-  drillIntoFiles,
-  pickRepoAndCommit,
-  pickSideBAndResolve,
-} from './flow';
+import type { MementoStore } from "../state";
+import type { CommandDeps } from "./shared";
+import { drillIntoFiles, pickRepoAndCommit, pickSideBAndResolve } from "./flow";
 
-export const makeCompareTwoCommits = (
-  deps: CommandDeps & { readonly state: MementoStore },
-) =>
-  async (): Promise<void> => {
+export const makeCompareTwoCommits =
+  (deps: CommandDeps & { readonly state: MementoStore }) => async (): Promise<void> => {
     const start = await pickRepoAndCommit({
       runner: deps.runner,
       gitApi: deps.gitApi,

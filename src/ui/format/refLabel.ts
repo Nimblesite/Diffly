@@ -1,5 +1,5 @@
-import { REF_TYPES, UI_TEXT } from '../../constants';
-import type { Ref } from '../../git/types';
+import { REF_TYPES, UI_TEXT } from "../../constants";
+import type { Ref } from "../../git/types";
 
 export const refTypeLabel = (ref: Ref): string => {
   if (ref.type === REF_TYPES.branch) {

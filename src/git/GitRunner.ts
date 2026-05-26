@@ -1,10 +1,10 @@
-import { spawn, type ChildProcessWithoutNullStreams } from 'node:child_process';
-import { GIT_BINARY, GIT_ERROR_KINDS, LOG_EVENTS } from '../constants';
-import { type Result, ok, err } from '../result';
-import { logger as defaultLogger, type Logger } from '../logger';
-import type { GitError } from './types';
+import { spawn, type ChildProcessWithoutNullStreams } from "node:child_process";
+import { GIT_BINARY, GIT_ERROR_KINDS, LOG_EVENTS } from "../constants";
+import { type Result, ok, err } from "../result";
+import { logger as defaultLogger, type Logger } from "../logger";
+import type { GitError } from "./types";
 
-const UNKNOWN_EXIT_LABEL = '?';
+const UNKNOWN_EXIT_LABEL = "?";
 const UNKNOWN_EXIT_CODE = -1;
 
 export interface GitRunArgs {
@@ -44,55 +44,40 @@ const finishRun = (params: {
   });
 };
 
-const wireSubprocess = ({
-  child,
-  argCount,
-  subcommand,
-  logger,
-  resolve,
-}: WireArgs): void => {
-  let stdout = '';
-  let stderr = '';
-  child.stdout.on('data', (chunk: Buffer) => {
-    stdout += chunk.toString('utf8');
+const wireSubprocess = ({ child, argCount, subcommand, logger, resolve }: WireArgs): void => {
+  let stdout = "";
+  let stderr = "";
+  child.stdout.on("data", (chunk: Buffer) => {
+    stdout += chunk.toString("utf8");
   });
-  child.stderr.on('data', (chunk: Buffer) => {
-    stderr += chunk.toString('utf8');
+  child.stderr.on("data", (chunk: Buffer) => {
+    stderr += chunk.toString("utf8");
   });
-  child.on('error', (e: Error) => {
+  child.on("error", (e: Error) => {
     logger.warn({ argCount }, LOG_EVENTS.gitRunSpawnFailed);
     resolve(err({ kind: GIT_ERROR_KINDS.spawnFailed, message: e.message }));
   });
-  child.on('close', (code: number | null) => {
-    logger.debug(
-      { exitCode: code, stdoutLen: stdout.length },
-      LOG_EVENTS.gitRunEnd,
-    );
+  child.on("close", (code: number | null) => {
+    logger.debug({ exitCode: code, stdoutLen: stdout.length }, LOG_EVENTS.gitRunEnd);
     resolve(finishRun({ code, subcommand, stdout, stderr }));
   });
 };
 
-const runGit = async ({
-  args,
-  cwd,
-  logger,
-}: GitRunArgs & { logger: Logger }): Promise<Result<string, GitError>> => {
+const runGit = async ({ args, cwd, logger }: GitRunArgs & { logger: Logger }): Promise<Result<string, GitError>> => {
   logger.debug({ argCount: args.length }, LOG_EVENTS.gitRunStart);
   return await new Promise<Result<string, GitError>>((resolve) => {
     const child = spawn(GIT_BINARY, [...args], { cwd });
     wireSubprocess({
       child,
       argCount: args.length,
-      subcommand: args[0] ?? '',
+      subcommand: args[0] ?? "",
       logger,
       resolve,
     });
   });
 };
 
-export const createGitRunner = (
-  deps: { logger?: Logger } = {},
-): GitRunner => {
+export const createGitRunner = (deps: { logger?: Logger } = {}): GitRunner => {
   const logger = deps.logger ?? defaultLogger;
   return { run: async (a) => await runGit({ ...a, logger }) };
 };

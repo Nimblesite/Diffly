@@ -14,11 +14,11 @@ There are **seven** commands. Three are reachable from the Command Palette, four
 
 Open the **Source Control** view (Ctrl/Cmd+Shift+G), expand a repository's **History** section, and **right-click any commit**. Three Diffy entries appear:
 
-| Menu label | Command ID | What it does |
-| --- | --- | --- |
-| **Diffy: Compare with…** | `diffy.compareWith` | The right-clicked commit is Side A. A QuickPick asks what Side B is: **Working Copy**, **Index**, **Pick a commit…**, or **Pick a branch or tag…**. Then a file QuickPick lists every changed file; selecting one opens `vscode.diff`. The picker stays open so you can open many files in a row. |
-| **Diffy: Compare with Working Copy** | `diffy.compareWithWorkingCopy` | Same as above, but Side B is hardcoded to your on-disk working copy. Skips the Side B prompt. |
-| **Diffy: Compare with Previous** | `diffy.compareWithPrevious` | Side A is the right-clicked commit, Side B is its first parent (`<sha>^1`). Use this for a classic "what changed in this commit?" view. |
+| Menu label                           | Command ID                     | What it does                                                                                                                                                                                                                                                                                      |
+| ------------------------------------ | ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Diffy: Compare with…**             | `diffy.compareWith`            | The right-clicked commit is Side A. A QuickPick asks what Side B is: **Working Copy**, **Index**, **Pick a commit…**, or **Pick a branch or tag…**. Then a file QuickPick lists every changed file; selecting one opens `vscode.diff`. The picker stays open so you can open many files in a row. |
+| **Diffy: Compare with Working Copy** | `diffy.compareWithWorkingCopy` | Same as above, but Side B is hardcoded to your on-disk working copy. Skips the Side B prompt.                                                                                                                                                                                                     |
+| **Diffy: Compare with Previous**     | `diffy.compareWithPrevious`    | Side A is the right-clicked commit, Side B is its first parent (`<sha>^1`). Use this for a classic "what changed in this commit?" view.                                                                                                                                                           |
 
 > These three are intentionally **hidden from the Command Palette** — they only make sense when invoked against a specific commit, which the right-click target provides.
 
@@ -26,35 +26,35 @@ Open the **Source Control** view (Ctrl/Cmd+Shift+G), expand a repository's **His
 
 In the Source Control view, **right-click any file** under **Changes**, **Staged Changes**, or **Merge Changes**:
 
-| Menu label | Command ID | What it does |
-| --- | --- | --- |
+| Menu label                      | Command ID                    | What it does                                                                                                      |
+| ------------------------------- | ----------------------------- | ----------------------------------------------------------------------------------------------------------------- |
 | **Diffy: Compare with Commit…** | `diffy.compareFileWithCommit` | Pick a commit from a log QuickPick. Opens a single-file diff: that file at the chosen commit ↔ your working copy. |
 
 ### From the **editor tab title** (right-click the file's tab)
 
 **Right-click the tab** of any open text file:
 
-| Menu label | Command ID | What it does |
-| --- | --- | --- |
+| Menu label                      | Command ID                    | What it does                                                               |
+| ------------------------------- | ----------------------------- | -------------------------------------------------------------------------- |
 | **Diffy: Compare with Commit…** | `diffy.compareFileWithCommit` | Same as above, but the target file is the one whose tab you right-clicked. |
 
 ### From the **File Explorer** (right-click a file in the tree)
 
 **Right-click any file** (not a folder) in the Explorer:
 
-| Menu label | Command ID | What it does |
-| --- | --- | --- |
+| Menu label                      | Command ID                    | What it does                                                 |
+| ------------------------------- | ----------------------------- | ------------------------------------------------------------ |
 | **Diffy: Compare with Commit…** | `diffy.compareFileWithCommit` | Same again — the target is the file you clicked in the tree. |
 
 ### From the **Command Palette** (Ctrl/Cmd+Shift+P)
 
 Type `Diffy:` to filter. Three entries are listed:
 
-| Palette label | Command ID | What it does |
-| --- | --- | --- |
-| **Diffy: Compare Two Commits** | `diffy.compareTwoCommits` | No target needed. QuickPick chain: pick repo → pick Side A commit → pick Side B (working copy / index / commit / ref) → pick files. |
-| **Diffy: Compare with Commit…** | `diffy.compareFileWithCommit` | Uses the **currently focused editor's file** as the target. Same flow as the right-click version. If no editor is focused, Diffy will tell you to open a file first. |
-| **Diffy: Reopen Last Comparison** | `diffy.reopenLast` | Reopens the file picker for the last A↔B comparison you made (stored per-workspace). Handy after closing the picker mid-review. |
+| Palette label                     | Command ID                    | What it does                                                                                                                                                         |
+| --------------------------------- | ----------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Diffy: Compare Two Commits**    | `diffy.compareTwoCommits`     | No target needed. QuickPick chain: pick repo → pick Side A commit → pick Side B (working copy / index / commit / ref) → pick files.                                  |
+| **Diffy: Compare with Commit…**   | `diffy.compareFileWithCommit` | Uses the **currently focused editor's file** as the target. Same flow as the right-click version. If no editor is focused, Diffy will tell you to open a file first. |
+| **Diffy: Reopen Last Comparison** | `diffy.reopenLast`            | Reopens the file picker for the last A↔B comparison you made (stored per-workspace). Handy after closing the picker mid-review.                                      |
 
 > **`Diffy: Show Logs`** (`diffy.showLogs`) exists but is hidden from the palette; it's reserved for the extension to surface its OutputChannel programmatically. Open it manually via **View → Output → "Diffy"**.
 

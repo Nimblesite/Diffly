@@ -1,11 +1,4 @@
-import {
-  COMMAND_IDS,
-  MENU_GROUP_PREFIX,
-  MENU_IDS,
-  MENU_WHEN,
-  TITLE_PREFIX,
-  UI_TEXT,
-} from './constants';
+import { COMMAND_IDS, MENU_GROUP_PREFIX, MENU_IDS, MENU_WHEN, TITLE_PREFIX, UI_TEXT } from "./constants";
 
 export interface MenuEntry {
   readonly command: string;
@@ -37,11 +30,7 @@ const fileLevelCommands = [
   COMMAND_IDS.compareFileWithTag,
 ] as const;
 
-const groupedEntries = (
-  commands: readonly string[],
-  when: string,
-  groupPrefix: string,
-): readonly MenuEntry[] =>
+const groupedEntries = (commands: readonly string[], when: string, groupPrefix: string): readonly MenuEntry[] =>
   commands.map((command, i) => ({
     command,
     when,
@@ -53,26 +42,10 @@ const hideFromPalette = (commands: readonly string[]) =>
 
 export const buildMenuManifest = (): MenuManifest => ({
   menus: {
-    [MENU_IDS.scmHistoryItem]: groupedEntries(
-      commitLevelCommands,
-      MENU_WHEN.scmGit,
-      MENU_GROUP_PREFIX,
-    ),
-    [MENU_IDS.scmResourceState]: groupedEntries(
-      fileLevelCommands,
-      MENU_WHEN.scmGit,
-      MENU_GROUP_PREFIX,
-    ),
-    [MENU_IDS.editorTitleContext]: groupedEntries(
-      fileLevelCommands,
-      MENU_WHEN.resourceFile,
-      MENU_GROUP_PREFIX,
-    ),
-    [MENU_IDS.explorerContext]: groupedEntries(
-      fileLevelCommands,
-      MENU_WHEN.resourceFileNotFolder,
-      MENU_GROUP_PREFIX,
-    ),
+    [MENU_IDS.scmHistoryItem]: groupedEntries(commitLevelCommands, MENU_WHEN.scmGit, MENU_GROUP_PREFIX),
+    [MENU_IDS.scmResourceState]: groupedEntries(fileLevelCommands, MENU_WHEN.scmGit, MENU_GROUP_PREFIX),
+    [MENU_IDS.editorTitleContext]: groupedEntries(fileLevelCommands, MENU_WHEN.resourceFile, MENU_GROUP_PREFIX),
+    [MENU_IDS.explorerContext]: groupedEntries(fileLevelCommands, MENU_WHEN.resourceFileNotFolder, MENU_GROUP_PREFIX),
   },
   commandPalette: hideFromPalette([
     COMMAND_IDS.compareWith,

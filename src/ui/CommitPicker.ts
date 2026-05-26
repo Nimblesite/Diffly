@@ -1,10 +1,10 @@
-import type * as vscode from 'vscode';
-import { UI_TEXT } from '../constants';
-import { type Result, map } from '../result';
-import type { Commit } from '../git/types';
-import { showSinglePick } from './runQuickPick';
-import type { Cancelled } from './cancelled';
-import { formatRelative } from './format/relativeTime';
+import type * as vscode from "vscode";
+import { UI_TEXT } from "../constants";
+import { type Result, map } from "../result";
+import type { Commit } from "../git/types";
+import { showSinglePick } from "./runQuickPick";
+import type { Cancelled } from "./cancelled";
+import { formatRelative } from "./format/relativeTime";
 
 interface CommitPickItem extends vscode.QuickPickItem {
   readonly commit: Commit;

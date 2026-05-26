@@ -1,22 +1,22 @@
-import { spawnSync } from 'node:child_process';
-import * as path from 'node:path';
-import * as vscode from 'vscode';
+import { spawnSync } from "node:child_process";
+import * as path from "node:path";
+import * as vscode from "vscode";
 
 export const workspaceRoot = (): string => {
   const folder = vscode.workspace.workspaceFolders?.[0];
   if (folder === undefined) {
-    throw new Error('No workspace folder open');
+    throw new Error("No workspace folder open");
   }
   return folder.uri.fsPath;
 };
 
 export const gitOut = (args: readonly string[]): string => {
-  const r = spawnSync('git', [...args], {
+  const r = spawnSync("git", [...args], {
     cwd: workspaceRoot(),
-    encoding: 'utf8',
+    encoding: "utf8",
   });
   if (r.status !== 0) {
-    throw new Error(`git ${args.join(' ')} failed: ${r.stderr}`);
+    throw new Error(`git ${args.join(" ")} failed: ${r.stderr}`);
   }
   return r.stdout.trim();
 };
@@ -28,20 +28,16 @@ export interface SeedShas {
 }
 
 export const readSeedShas = (): SeedShas => {
-  const lines = gitOut(['log', '--format=%H', '--reverse']).split('\n');
+  const lines = gitOut(["log", "--format=%H", "--reverse"]).split("\n");
   const [first, second, third] = lines;
-  if (
-    first === undefined ||
-    second === undefined ||
-    third === undefined
-  ) {
+  if (first === undefined || second === undefined || third === undefined) {
     throw new Error(`Expected 3 commits, found ${lines.length.toString()}`);
   }
   return { first, second, third };
 };
 
-export const tick = async (count = 30): Promise<void> =>
-  { await new Promise<void>((resolve) => {
+export const tick = async (count = 30): Promise<void> => {
+  await new Promise<void>((resolve) => {
     let i = 0;
     const step = (): void => {
       i++;
@@ -52,39 +48,39 @@ export const tick = async (count = 30): Promise<void> =>
       setImmediate(step);
     };
     setImmediate(step);
-  }); };
+  });
+};
 
-const wait = async (ms: number): Promise<void> =>
-  { await new Promise<void>((resolve) => {
+const wait = async (ms: number): Promise<void> => {
+  await new Promise<void>((resolve) => {
     setTimeout(resolve, ms);
-  }); };
+  });
+};
 
 const PICKER_RENDER_MS = 900;
 
 export const accept = async (): Promise<void> => {
   await wait(PICKER_RENDER_MS);
-  await vscode.commands.executeCommand('workbench.action.acceptSelectedQuickOpenItem');
+  await vscode.commands.executeCommand("workbench.action.acceptSelectedQuickOpenItem");
 };
 
 export const typeText = async (text: string): Promise<void> => {
   await wait(PICKER_RENDER_MS);
-  await vscode.commands.executeCommand('type', { text });
+  await vscode.commands.executeCommand("type", { text });
 };
 
 export const moveNext = async (): Promise<void> => {
   await wait(PICKER_RENDER_MS);
-  await vscode.commands.executeCommand('workbench.action.quickOpenSelectNext');
+  await vscode.commands.executeCommand("workbench.action.quickOpenSelectNext");
 };
 
 export const dismissQuickPick = async (): Promise<void> => {
   await wait(50);
-  await vscode.commands.executeCommand('workbench.action.closeQuickOpen');
+  await vscode.commands.executeCommand("workbench.action.closeQuickOpen");
 };
 
 export const allDiffTabs = (): vscode.Tab[] =>
-  vscode.window.tabGroups.all
-    .flatMap((g) => g.tabs)
-    .filter((t) => t.input instanceof vscode.TabInputTextDiff);
+  vscode.window.tabGroups.all.flatMap((g) => g.tabs).filter((t) => t.input instanceof vscode.TabInputTextDiff);
 
 export const waitForDiffTab = async ({
   timeoutMs = 8000,
@@ -99,7 +95,7 @@ export const waitForDiffTab = async ({
     }
     const timer = setTimeout(() => {
       sub.dispose();
-      reject(new Error('Timed out waiting for diff tab'));
+      reject(new Error("Timed out waiting for diff tab"));
     }, timeoutMs);
     const sub = vscode.window.tabGroups.onDidChangeTabs(() => {
       const t = allDiffTabs()[0];
@@ -113,7 +109,7 @@ export const waitForDiffTab = async ({
 };
 
 export const closeAllEditors = async (): Promise<void> => {
-  await vscode.commands.executeCommand('workbench.action.closeAllEditors');
+  await vscode.commands.executeCommand("workbench.action.closeAllEditors");
   await tick(5);
 };
 
@@ -123,9 +119,7 @@ export const openFileInEditor = async (relPath: string): Promise<vscode.TextEdit
   return await vscode.window.showTextDocument(doc);
 };
 
-export const tabInputUris = (
-  tab: vscode.Tab,
-): { left: vscode.Uri; right: vscode.Uri } => {
+export const tabInputUris = (tab: vscode.Tab): { left: vscode.Uri; right: vscode.Uri } => {
   if (!(tab.input instanceof vscode.TabInputTextDiff)) {
     throw new Error(`Tab is not a TabInputTextDiff: ${tab.label}`);
   }
@@ -142,9 +136,9 @@ interface GitExtensionShape {
 }
 
 export const waitForRepoReady = async (timeoutMs = 15000): Promise<void> => {
-  const ext = vscode.extensions.getExtension<GitExtensionShape>('vscode.git');
+  const ext = vscode.extensions.getExtension<GitExtensionShape>("vscode.git");
   if (ext === undefined) {
-    throw new Error('vscode.git extension not present');
+    throw new Error("vscode.git extension not present");
   }
   if (!ext.isActive) {
     await ext.activate();
@@ -156,7 +150,7 @@ export const waitForRepoReady = async (timeoutMs = 15000): Promise<void> => {
   await new Promise<void>((resolve, reject) => {
     const timer = setTimeout(() => {
       sub.dispose();
-      reject(new Error('vscode.git never opened the seeded repo'));
+      reject(new Error("vscode.git never opened the seeded repo"));
     }, timeoutMs);
     const sub = api.onDidOpenRepository(() => {
       clearTimeout(timer);

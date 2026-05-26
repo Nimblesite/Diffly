@@ -1,25 +1,15 @@
-import * as path from 'node:path';
-import * as vscode from 'vscode';
-import {
-  BUILT_IN_COMMANDS,
-  LOG_EVENTS,
-  REV_KINDS,
-  SHORT_SHA_LEN,
-  UI_TEXT,
-} from '../constants';
-import type { GitRepo } from '../git/GitRepo';
-import type { GitRunner } from '../git/GitRunner';
-import { createGitRepo } from '../git/GitRepo';
-import {
-  type GitApi,
-  type GitVsRepository,
-  findRepoForUri,
-} from '../vscodeGitApi';
-import type { CommitRev, DiffyAddressableRev, RevSpec, Sha } from '../git/types';
-import { logger } from '../logger';
-import { type Result, err, ok } from '../result';
-import { CANCELLED, type Cancelled } from '../ui/cancelled';
-import { buildDiffyUri } from '../ui/uri';
+import * as path from "node:path";
+import * as vscode from "vscode";
+import { BUILT_IN_COMMANDS, LOG_EVENTS, REV_KINDS, SHORT_SHA_LEN, UI_TEXT } from "../constants";
+import type { GitRepo } from "../git/GitRepo";
+import type { GitRunner } from "../git/GitRunner";
+import { createGitRepo } from "../git/GitRepo";
+import { type GitApi, type GitVsRepository, findRepoForUri } from "../vscodeGitApi";
+import type { CommitRev, DiffyAddressableRev, RevSpec, Sha } from "../git/types";
+import { logger } from "../logger";
+import { type Result, err, ok } from "../result";
+import { CANCELLED, type Cancelled } from "../ui/cancelled";
+import { buildDiffyUri } from "../ui/uri";
 
 export interface CommandDeps {
   readonly runner: GitRunner;
@@ -47,8 +37,7 @@ export const formatDiffTitle = ({
   revA: CommitRev;
   revB: RevSpec;
   basename: string;
-}): string =>
-  `${labelForRev(revA)} ${UI_TEXT.pathArrow} ${labelForRev(revB)} ${UI_TEXT.pathDash} ${basename}`;
+}): string => `${labelForRev(revA)} ${UI_TEXT.pathArrow} ${labelForRev(revB)} ${UI_TEXT.pathDash} ${basename}`;
 
 export const uriForRev = ({
   rev,
@@ -63,9 +52,7 @@ export const uriForRev = ({
     return vscode.Uri.file(path.join(repoRoot, relPath));
   }
   const addressable: DiffyAddressableRev =
-    rev.kind === REV_KINDS.commit
-      ? { kind: REV_KINDS.commit, sha: rev.sha }
-      : { kind: REV_KINDS.index };
+    rev.kind === REV_KINDS.commit ? { kind: REV_KINDS.commit, sha: rev.sha } : { kind: REV_KINDS.index };
   return vscode.Uri.parse(buildDiffyUri(addressable, relPath));
 };
 
@@ -87,26 +74,13 @@ export const openDiff = async ({
     revB,
     basename: path.basename(relPath),
   });
-  logger.info(
-    { shaA: shortSha(revA.sha), revBKind: revB.kind },
-    LOG_EVENTS.diffOpen,
-  );
-  await vscode.commands.executeCommand(
-    BUILT_IN_COMMANDS.diff,
-    left,
-    right,
-    title,
-  );
+  logger.info({ shaA: shortSha(revA.sha), revBKind: revB.kind }, LOG_EVENTS.diffOpen);
+  await vscode.commands.executeCommand(BUILT_IN_COMMANDS.diff, left, right, title);
 };
 
-export const repoForUri = (
-  api: GitApi,
-  uri: vscode.Uri,
-): GitVsRepository | undefined => findRepoForUri(api, uri);
+export const repoForUri = (api: GitApi, uri: vscode.Uri): GitVsRepository | undefined => findRepoForUri(api, uri);
 
-export const pickRepoFrom = async (
-  api: GitApi,
-): Promise<Result<GitVsRepository, Cancelled>> => {
+export const pickRepoFrom = async (api: GitApi): Promise<Result<GitVsRepository, Cancelled>> => {
   if (api.repositories.length === 0) {
     return err(CANCELLED);
   }
@@ -124,7 +98,5 @@ export const pickRepoFrom = async (
   return picked === undefined ? err(CANCELLED) : ok(picked.repo);
 };
 
-export const buildRepo = (
-  runner: GitRunner,
-  vsRepo: GitVsRepository,
-): GitRepo => createGitRepo({ runner, cwd: vsRepo.rootUri.fsPath });
+export const buildRepo = (runner: GitRunner, vsRepo: GitVsRepository): GitRepo =>
+  createGitRepo({ runner, cwd: vsRepo.rootUri.fsPath });

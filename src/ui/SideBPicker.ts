@@ -1,8 +1,8 @@
-import type * as vscode from 'vscode';
-import { SIDE_B_KINDS, UI_TEXT } from '../constants';
-import { type Result, map } from '../result';
-import { showSinglePick } from './runQuickPick';
-import type { Cancelled } from './cancelled';
+import type * as vscode from "vscode";
+import { SIDE_B_KINDS, UI_TEXT } from "../constants";
+import { type Result, map } from "../result";
+import { showSinglePick } from "./runQuickPick";
+import type { Cancelled } from "./cancelled";
 
 export type SideBChoice =
   | { readonly kind: typeof SIDE_B_KINDS.workingCopy }

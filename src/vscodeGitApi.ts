@@ -1,5 +1,5 @@
-import * as vscode from 'vscode';
-import { VSCODE_GIT_EXTENSION_ID } from './constants';
+import * as vscode from "vscode";
+import { VSCODE_GIT_EXTENSION_ID } from "./constants";
 
 const GIT_API_VERSION = 1;
 
@@ -17,9 +17,7 @@ export interface GitApi {
 }
 
 export const getGitApi = async (): Promise<GitApi | undefined> => {
-  const ext = vscode.extensions.getExtension<GitExtensionExports>(
-    VSCODE_GIT_EXTENSION_ID,
-  );
+  const ext = vscode.extensions.getExtension<GitExtensionExports>(VSCODE_GIT_EXTENSION_ID);
   if (ext === undefined) {
     return undefined;
   }
@@ -29,4 +27,4 @@ export const getGitApi = async (): Promise<GitApi | undefined> => {
   return ext.exports.getAPI(GIT_API_VERSION);
 };
 
-export { findRepoForUri } from './git/repoMatch';
+export { findRepoForUri } from "./git/repoMatch";

@@ -1,5 +1,5 @@
-import { CHANGED_FILE_STATUSES, UI_TEXT } from '../../constants';
-import type { ChangedFile, DiffStat } from '../../git/types';
+import { CHANGED_FILE_STATUSES, UI_TEXT } from "../../constants";
+import type { ChangedFile, DiffStat } from "../../git/types";
 
 export const statusBadge = (file: ChangedFile): string => {
   if (file.status === CHANGED_FILE_STATUSES.renamed) {
@@ -25,7 +25,7 @@ export interface FileEntry {
 
 export const mergeChangedFilesWithStats = (
   files: readonly ChangedFile[],
-  stats: readonly DiffStat[],
+  stats: readonly DiffStat[]
 ): readonly FileEntry[] => {
   const byPath = new Map<string, DiffStat>();
   for (const s of stats) {

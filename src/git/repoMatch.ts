@@ -13,7 +13,7 @@ interface ApiLike<U extends UriLike, R extends RepoLike<U>> {
 
 export const matchRepoByFsPath = <R extends RepoLike<UriLike>>(
   repositories: readonly R[],
-  targetFsPath: string,
+  targetFsPath: string
 ): R | undefined => {
   let best: R | undefined;
   for (const r of repositories) {
@@ -28,10 +28,7 @@ export const matchRepoByFsPath = <R extends RepoLike<UriLike>>(
   return best;
 };
 
-export const findRepoForUri = <U extends UriLike, R extends RepoLike<U>>(
-  api: ApiLike<U, R>,
-  uri: U,
-): R | undefined => {
+export const findRepoForUri = <U extends UriLike, R extends RepoLike<U>>(api: ApiLike<U, R>, uri: U): R | undefined => {
   if (api.getRepository !== undefined) {
     return api.getRepository(uri) ?? undefined;
   }

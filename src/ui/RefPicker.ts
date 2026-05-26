@@ -1,11 +1,11 @@
-import type * as vscode from 'vscode';
-import { SHORT_SHA_LEN, UI_TEXT } from '../constants';
-import { type Result, map } from '../result';
-import type { Ref, RefType } from '../git/types';
-import { showSinglePick } from './runQuickPick';
-import type { Cancelled } from './cancelled';
-import { refTypeLabel } from './format/refLabel';
-import { filterRefs } from './format/refFilter';
+import type * as vscode from "vscode";
+import { SHORT_SHA_LEN, UI_TEXT } from "../constants";
+import { type Result, map } from "../result";
+import type { Ref, RefType } from "../git/types";
+import { showSinglePick } from "./runQuickPick";
+import type { Cancelled } from "./cancelled";
+import { refTypeLabel } from "./format/refLabel";
+import { filterRefs } from "./format/refFilter";
 
 interface RefPickItem extends vscode.QuickPickItem {
   readonly ref: Ref;

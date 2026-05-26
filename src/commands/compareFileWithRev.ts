@@ -1,31 +1,27 @@
-import * as vscode from 'vscode';
-import { REV_KINDS, TITLE_PREFIX } from '../constants';
-import type { GitRepo } from '../git/GitRepo';
-import type { Sha } from '../git/types';
-import type { Result } from '../result';
-import { err, ok } from '../result';
-import { CANCELLED, type Cancelled } from '../ui/cancelled';
-import { pickCommit } from '../ui/CommitPicker';
-import { findRepoForUri } from '../vscodeGitApi';
-import {
-  type CommandDeps,
-  buildRepo,
-  openDiff,
-} from './shared';
-import { pickRefAsSha, reportGitError, sideAFromSha } from './flow';
+import * as vscode from "vscode";
+import { REV_KINDS, TITLE_PREFIX } from "../constants";
+import type { GitRepo } from "../git/GitRepo";
+import type { Sha } from "../git/types";
+import type { Result } from "../result";
+import { err, ok } from "../result";
+import { CANCELLED, type Cancelled } from "../ui/cancelled";
+import { pickCommit } from "../ui/CommitPicker";
+import { findRepoForUri } from "../vscodeGitApi";
+import { type CommandDeps, buildRepo, openDiff } from "./shared";
+import { pickRefAsSha, reportGitError, sideAFromSha } from "./flow";
 
 export const FILE_REV_SOURCES = {
-  commits: 'commits',
-  branch: 'branch',
-  tag: 'tag',
-  other: 'other',
+  commits: "commits",
+  branch: "branch",
+  tag: "tag",
+  other: "other",
 } as const;
 
 export type FileRevSource = (typeof FILE_REV_SOURCES)[keyof typeof FILE_REV_SOURCES];
 
 const NO_EDITOR = `${TITLE_PREFIX} open a file first.`;
 const NOT_IN_REPO = `${TITLE_PREFIX} file is not in a git repository.`;
-const LOG_OP = 'log';
+const LOG_OP = "log";
 
 const pickShaForFile = async ({
   repo,
@@ -86,11 +82,8 @@ const handler = async ({
   });
 };
 
-export const makeCompareFileWithRev = ({
-  deps,
-  source,
-}: {
-  deps: CommandDeps;
-  source: FileRevSource;
-}) =>
-  async (uri?: vscode.Uri): Promise<void> => { await handler({ deps, uri, source }); };
+export const makeCompareFileWithRev =
+  ({ deps, source }: { deps: CommandDeps; source: FileRevSource }) =>
+  async (uri?: vscode.Uri): Promise<void> => {
+    await handler({ deps, uri, source });
+  };
