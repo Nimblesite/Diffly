@@ -78,8 +78,7 @@ setup:
 # ---------------------------------------------------------------------------
 
 _coverage_check:
-	@THRESHOLD=$$(jq -r '.default_threshold' "$(COVERAGE_THRESHOLDS_FILE)"); \
-	npx c8 check-coverage --lines $$THRESHOLD
+	@node scripts/check-coverage-threshold.mjs
 
 ## help: List all available targets
 help:

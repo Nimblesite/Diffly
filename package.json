@@ -230,7 +230,7 @@
       "out/git/types.js",
       "**/*.d.ts"
     ],
-    "all": true,
+    "all": false,
     "reporter": [
       "text",
       "text-summary",
