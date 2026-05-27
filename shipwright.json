@@ -1,0 +1,25 @@
+{
+  "manifestVersion": 1,
+  "product": {
+    "id": "diffy",
+    "displayName": "Diffy",
+    "version": "0.1.0",
+    "repository": "https://github.com/MelbourneDeveloper/Diffy",
+    "homepage": "https://github.com/MelbourneDeveloper/Diffy"
+  },
+  "components": [
+    {
+      "id": "diffy-vscode",
+      "kind": "extension-vscode",
+      "language": "typescript",
+      "expectedVersion": "${PRODUCT_VERSION}",
+      "platforms": ["darwin-arm64", "darwin-x64", "linux-arm64", "linux-x64", "win32-arm64", "win32-x64"]
+    }
+  ],
+  "hosts": {
+    "vscode": {
+      "artifact": "vsix-per-platform",
+      "onMismatch": "error"
+    }
+  }
+}

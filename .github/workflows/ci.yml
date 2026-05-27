@@ -1,0 +1,60 @@
+# agent-pmo:74cf183
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    name: CI
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - run: npm ci
+
+      - name: Format check
+        run: make fmt CHECK=1
+
+      - name: Lint (includes shipwright.json schema check)
+        run: make lint
+
+      - name: Dry-run release stamp (proves the script still runs)
+        run: node scripts/stamp-release-version.mjs 0.0.0 --dry
+
+      # E2E suite needs xvfb so @vscode/test-electron can launch a headless Electron.
+      - name: Test
+        run: xvfb-run -a make test
+
+      - name: Build
+        run: make build
+
+      - name: Upload coverage
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage-report
+          path: |
+            coverage/
+            lcov.info
+          retention-days: 7
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build
+          path: out/
+          retention-days: 7

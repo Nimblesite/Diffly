@@ -1,0 +1,241 @@
+{
+  "name": "diffy",
+  "displayName": "Diffy",
+  "description": "Pick two things and diff them — context-menu git diffing in VSCode.",
+  "version": "0.1.0",
+  "publisher": "nimblesite",
+  "license": "MIT",
+  "icon": "icon.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MelbourneDeveloper/Diffy.git"
+  },
+  "main": "./out/extension.js",
+  "engines": {
+    "vscode": "^1.85.0",
+    "node": ">=20"
+  },
+  "categories": [
+    "SCM Providers"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "extensionDependencies": [
+    "vscode.git"
+  ],
+  "enabledApiProposals": [
+    "contribSourceControlHistoryItemMenu"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "diffy.compareWith",
+        "title": "Diffy: Compare with…"
+      },
+      {
+        "command": "diffy.compareWithWorkingCopy",
+        "title": "Diffy: Compare with Working Copy"
+      },
+      {
+        "command": "diffy.compareWithPrevious",
+        "title": "Diffy: Compare with Previous"
+      },
+      {
+        "command": "diffy.compareWithBranch",
+        "title": "Diffy: Compare with Branch…"
+      },
+      {
+        "command": "diffy.compareWithTag",
+        "title": "Diffy: Compare with Tag…"
+      },
+      {
+        "command": "diffy.compareTwoCommits",
+        "title": "Diffy: Compare Two Commits"
+      },
+      {
+        "command": "diffy.compareFileWithCommit",
+        "title": "Diffy: Compare with Commit…"
+      },
+      {
+        "command": "diffy.compareFileWithBranch",
+        "title": "Diffy: Compare with Branch…"
+      },
+      {
+        "command": "diffy.compareFileWithTag",
+        "title": "Diffy: Compare with Tag…"
+      },
+      {
+        "command": "diffy.reopenLast",
+        "title": "Diffy: Reopen Last Comparison"
+      },
+      {
+        "command": "diffy.showLogs",
+        "title": "Diffy: Show Logs"
+      }
+    ],
+    "menus": {
+      "scm/historyItem/context": [
+        {
+          "command": "diffy.compareWith",
+          "when": "scmProvider == git",
+          "group": "diffy@1"
+        },
+        {
+          "command": "diffy.compareWithWorkingCopy",
+          "when": "scmProvider == git",
+          "group": "diffy@2"
+        },
+        {
+          "command": "diffy.compareWithPrevious",
+          "when": "scmProvider == git",
+          "group": "diffy@3"
+        },
+        {
+          "command": "diffy.compareWithBranch",
+          "when": "scmProvider == git",
+          "group": "diffy@4"
+        },
+        {
+          "command": "diffy.compareWithTag",
+          "when": "scmProvider == git",
+          "group": "diffy@5"
+        }
+      ],
+      "scm/resourceState/context": [
+        {
+          "command": "diffy.compareFileWithCommit",
+          "when": "scmProvider == git",
+          "group": "diffy@1"
+        },
+        {
+          "command": "diffy.compareFileWithBranch",
+          "when": "scmProvider == git",
+          "group": "diffy@2"
+        },
+        {
+          "command": "diffy.compareFileWithTag",
+          "when": "scmProvider == git",
+          "group": "diffy@3"
+        }
+      ],
+      "editor/title/context": [
+        {
+          "command": "diffy.compareFileWithCommit",
+          "when": "resourceScheme == file",
+          "group": "diffy@1"
+        },
+        {
+          "command": "diffy.compareFileWithBranch",
+          "when": "resourceScheme == file",
+          "group": "diffy@2"
+        },
+        {
+          "command": "diffy.compareFileWithTag",
+          "when": "resourceScheme == file",
+          "group": "diffy@3"
+        }
+      ],
+      "explorer/context": [
+        {
+          "command": "diffy.compareFileWithCommit",
+          "when": "resourceScheme == file && !explorerResourceIsFolder",
+          "group": "diffy@1"
+        },
+        {
+          "command": "diffy.compareFileWithBranch",
+          "when": "resourceScheme == file && !explorerResourceIsFolder",
+          "group": "diffy@2"
+        },
+        {
+          "command": "diffy.compareFileWithTag",
+          "when": "resourceScheme == file && !explorerResourceIsFolder",
+          "group": "diffy@3"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "diffy.compareWith",
+          "when": "false"
+        },
+        {
+          "command": "diffy.compareWithWorkingCopy",
+          "when": "false"
+        },
+        {
+          "command": "diffy.compareWithPrevious",
+          "when": "false"
+        },
+        {
+          "command": "diffy.compareWithBranch",
+          "when": "false"
+        },
+        {
+          "command": "diffy.compareWithTag",
+          "when": "false"
+        },
+        {
+          "command": "diffy.showLogs",
+          "when": "false"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "build": "tsc -p . && node ./scripts/sync-menus.mjs",
+    "watch": "tsc -p . -w",
+    "typecheck": "tsc -p . --noEmit",
+    "lint": "eslint src",
+    "fmt": "prettier --write \"src/**/*.ts\" \"*.json\" \"*.md\"",
+    "fmt:check": "prettier --check \"src/**/*.ts\" \"*.json\" \"*.md\"",
+    "sync:menus": "tsc -p . && node ./scripts/sync-menus.mjs",
+    "sync:menus:check": "tsc -p . && node ./scripts/sync-menus.mjs --check",
+    "pretest": "npm run build",
+    "test:unit": "mocha --reporter spec --timeout 10000 \"out/test/unit/**/*.test.js\"",
+    "test:e2e": "node ./out/test/runTests.js",
+    "test:coverage": "node ./scripts/run-coverage.mjs",
+    "shipwright:validate": "node ./scripts/validate-shipwright-manifest.mjs",
+    "shipwright:stamp": "node ./scripts/stamp-release-version.mjs",
+    "shipwright:verify": "node ./scripts/verify-versions.mjs"
+  },
+  "dependencies": {
+    "pino": "^9.5.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.13.0",
+    "ajv": "^8.17.1",
+    "ajv-formats": "^3.0.1",
+    "@types/mocha": "^10.0.9",
+    "@types/node": "^20.16.0",
+    "@types/vscode": "^1.85.0",
+    "@vscode/test-electron": "^2.4.1",
+    "@vscode/vsce": "^3.2.0",
+    "c8": "^10.1.2",
+    "eslint": "^9.13.0",
+    "glob": "^11.0.0",
+    "mocha": "^10.8.2",
+    "prettier": "^3.3.3",
+    "typescript": "^5.6.3",
+    "typescript-eslint": "^8.12.2"
+  },
+  "c8": {
+    "tempDirectory": "coverage/tmp",
+    "reportsDirectory": "coverage/report",
+    "include": [
+      "out/**/*.js"
+    ],
+    "exclude": [
+      "out/test/**",
+      "out/scripts/**",
+      "out/git/types.js",
+      "**/*.d.ts"
+    ],
+    "all": false,
+    "reporter": [
+      "text",
+      "text-summary",
+      "json-summary",
+      "lcov"
+    ]
+  }
+}
