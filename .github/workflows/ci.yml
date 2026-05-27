@@ -14,12 +14,8 @@ concurrency:
 jobs:
   ci:
     name: CI
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     timeout-minutes: 10
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
     steps:
       - uses: actions/checkout@v4
 
@@ -30,7 +26,6 @@ jobs:
 
       - run: npm ci
 
-      # E2E suite runs under xvfb on Linux so @vscode/test-electron can launch.
       - name: Format check
         run: make fmt CHECK=1
 
@@ -38,34 +33,28 @@ jobs:
         run: make lint
 
       - name: Dry-run release stamp (proves the script still runs)
-        shell: bash
         run: node scripts/stamp-release-version.mjs 0.0.0 --dry
 
-      - name: Test (Linux, xvfb)
-        if: runner.os == 'Linux'
+      # E2E suite needs xvfb so @vscode/test-electron can launch a headless Electron.
+      - name: Test
         run: xvfb-run -a make test
 
-      - name: Test (macOS / Windows)
-        if: runner.os != 'Linux'
-        run: make test
+      - name: Build
+        run: make build
 
       - name: Upload coverage
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: coverage-report-${{ matrix.os }}
+          name: coverage-report
           path: |
             coverage/
             lcov.info
           retention-days: 7
 
-      - name: Build
-        run: make build
-
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: build-${{ matrix.os }}
-          path: |
-            out/
+          name: build
+          path: out/
           retention-days: 7
