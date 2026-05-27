@@ -178,7 +178,17 @@ jobs:
           node-version: '22.x'
 
       # Publish all platform-specific VSIX files in a single vsce invocation.
+      # `--packagePath` accepts multiple paths as positional args after the flag.
       - name: Publish to Marketplace
-        run: npx vsce publish --packagePath $(find artifacts -name '*.vsix')
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -t vsixes < <(find artifacts -name '*.vsix' | sort)
+          if [ "${#vsixes[@]}" -eq 0 ]; then
+            echo "no VSIX artifacts found in artifacts/" >&2
+            exit 1
+          fi
+          printf '  publishing %s\n' "${vsixes[@]}"
+          npx vsce publish --packagePath "${vsixes[@]}"
         env:
           VSCE_PAT: ${{ secrets.VSCE_PAT }}
