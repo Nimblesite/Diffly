@@ -9,8 +9,8 @@
 ## Install
 
 - **VS Code**: search _Diffy_ in the Extensions view, or
-- **Command line**: `code --install-extension nimblesite.diffy`
-- **Marketplace**: https://marketplace.visualstudio.com/items?itemName=nimblesite.diffy
+- **Command line**: `code --install-extension nimblesite.diffy-scm`
+- **Marketplace**: https://marketplace.visualstudio.com/items?itemName=nimblesite.diffy-scm
 
 Diffy depends on the built-in **Git** extension and needs `git` on `PATH`.
 

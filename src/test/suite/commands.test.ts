@@ -16,7 +16,7 @@ import {
   workspaceRoot,
 } from "./helpers";
 
-const EXTENSION_ID = "nimblesite.diffy";
+const EXTENSION_ID = "nimblesite.diffy-scm";
 
 const ensureActivated = async (): Promise<void> => {
   const ext = vscode.extensions.getExtension(EXTENSION_ID);

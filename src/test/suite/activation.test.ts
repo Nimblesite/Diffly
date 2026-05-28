@@ -3,7 +3,7 @@ import * as vscode from "vscode";
 import { COMMAND_IDS, OUTPUT_CHANNEL_NAME } from "../../constants";
 import { tick } from "./helpers";
 
-const EXTENSION_ID = "nimblesite.diffy";
+const EXTENSION_ID = "nimblesite.diffy-scm";
 const TICK_MS = 20;
 
 const ALL_COMMAND_IDS: readonly string[] = Object.values(COMMAND_IDS);

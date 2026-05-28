@@ -2,7 +2,7 @@ import { strict as assert } from "node:assert";
 import * as vscode from "vscode";
 import { readSeedShas, waitForRepoReady } from "./helpers";
 
-const EXTENSION_ID = "nimblesite.diffy";
+const EXTENSION_ID = "nimblesite.diffy-scm";
 
 const readDiffy = async (uriString: string): Promise<string> => {
   const doc = await vscode.workspace.openTextDocument(vscode.Uri.parse(uriString));

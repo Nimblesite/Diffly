@@ -39,7 +39,7 @@ const main = async (): Promise<void> => {
     extensionDevelopmentPath,
     extensionTestsPath,
     extensionTestsEnv,
-    launchArgs: [workspacePath, "--disable-telemetry", "--enable-proposed-api", "nimblesite.diffy"],
+    launchArgs: [workspacePath, "--disable-telemetry", "--enable-proposed-api", "nimblesite.diffy-scm"],
   });
 };
 
