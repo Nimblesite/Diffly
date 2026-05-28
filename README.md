@@ -83,8 +83,8 @@ Right-click any file under **Changes**, **Staged Changes**, or **Merge Changes**
 
 ### From the **editor tab title** (right-click the file's tab)
 
-| Menu label                      | Command ID                    | What it does                                                               |
-| ------------------------------- | ----------------------------- | -------------------------------------------------------------------------- |
+| Menu label                      | Command ID                    | What it does                                                       |
+| ------------------------------- | ----------------------------- | ------------------------------------------------------------------ |
 | **Diffy: Compare with Commit…** | `diffy.compareFileWithCommit` | Same as above; the target is the file whose tab you right-clicked. |
 
 ### From the **File Explorer** (right-click a file)
