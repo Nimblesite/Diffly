@@ -1,9 +1,17 @@
 // The product name lives here ONCE. Every command id, context key, memento key,
 // menu group, title prefix, URI scheme, and channel label derives from it.
+const PUBLISHER = "nimblesite";
 const BRAND_ID = "diffr";
 const BRAND_NAME = "Diffr";
 
 const ns = (suffix: string): string => `${BRAND_ID}.${suffix}`;
+
+export const EXTENSION_ID = `${PUBLISHER}.${BRAND_ID}`;
+
+export const ENV_VARS = {
+  logLevel: `${BRAND_ID.toUpperCase()}_LOG_LEVEL`,
+  e2e: `${BRAND_ID.toUpperCase()}_E2E`,
+} as const;
 
 export const SCHEME = BRAND_ID;
 
