@@ -1,8 +1,7 @@
 import { strict as assert } from "node:assert";
 import * as vscode from "vscode";
+import { EXTENSION_ID } from "../../constants";
 import { readSeedShas, waitForRepoReady } from "./helpers";
-
-const EXTENSION_ID = "nimblesite.diffr";
 
 const readDiffr = async (uriString: string): Promise<string> => {
   const doc = await vscode.workspace.openTextDocument(vscode.Uri.parse(uriString));

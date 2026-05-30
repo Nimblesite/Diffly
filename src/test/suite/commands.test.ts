@@ -1,6 +1,6 @@
 import { strict as assert } from "node:assert";
 import * as vscode from "vscode";
-import { COMMAND_IDS } from "../../constants";
+import { COMMAND_IDS, EXTENSION_ID } from "../../constants";
 import {
   accept,
   allDiffTabs,
@@ -15,8 +15,6 @@ import {
   waitForRepoReady,
   workspaceRoot,
 } from "./helpers";
-
-const EXTENSION_ID = "nimblesite.diffr";
 
 const ensureActivated = async (): Promise<void> => {
   const ext = vscode.extensions.getExtension(EXTENSION_ID);

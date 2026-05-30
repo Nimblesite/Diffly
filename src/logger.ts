@@ -1,7 +1,5 @@
 import pino, { type Logger as PinoLogger, type Level, multistream } from "pino";
-import { LOG_LEVELS } from "./constants";
-
-const ENV_LOG_LEVEL_VAR = "DIFFR_LOG_LEVEL";
+import { ENV_VARS, LOG_LEVELS } from "./constants";
 
 export interface Logger {
   trace: (fields: object, msg?: string) => void;
@@ -18,7 +16,7 @@ export interface LogStreamEntry {
 
 const streams: LogStreamEntry[] = [{ stream: process.stdout }];
 
-const envLevel = process.env[ENV_LOG_LEVEL_VAR];
+const envLevel = process.env[ENV_VARS.logLevel];
 
 const buildPino = (): PinoLogger =>
   pino(

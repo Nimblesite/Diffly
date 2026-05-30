@@ -1,9 +1,8 @@
 import { strict as assert } from "node:assert";
 import * as vscode from "vscode";
-import { COMMAND_IDS, OUTPUT_CHANNEL_NAME } from "../../constants";
+import { COMMAND_IDS, EXTENSION_ID, OUTPUT_CHANNEL_NAME } from "../../constants";
 import { tick } from "./helpers";
 
-const EXTENSION_ID = "nimblesite.diffr";
 const TICK_MS = 20;
 
 const ALL_COMMAND_IDS: readonly string[] = Object.values(COMMAND_IDS);
