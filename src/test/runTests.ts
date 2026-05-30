@@ -2,6 +2,7 @@ import * as path from "node:path";
 import { spawnSync } from "node:child_process";
 import { existsSync } from "node:fs";
 import { runTests } from "@vscode/test-electron";
+import { ENV_VARS, EXTENSION_ID } from "../constants";
 
 const repoRoot = path.resolve(__dirname, "..", "..");
 const extensionDevelopmentPath = repoRoot;
@@ -30,7 +31,7 @@ const main = async (): Promise<void> => {
   }
   const coverageDir = process.env["NODE_V8_COVERAGE"];
   const extensionTestsEnv: Record<string, string> = {
-    DIFFR_E2E: "1",
+    [ENV_VARS.e2e]: "1",
   };
   if (coverageDir !== undefined && coverageDir !== "") {
     extensionTestsEnv["NODE_V8_COVERAGE"] = coverageDir;
@@ -39,7 +40,7 @@ const main = async (): Promise<void> => {
     extensionDevelopmentPath,
     extensionTestsPath,
     extensionTestsEnv,
-    launchArgs: [workspacePath, "--disable-telemetry", "--enable-proposed-api", "nimblesite.diffr"],
+    launchArgs: [workspacePath, "--disable-telemetry", "--enable-proposed-api", EXTENSION_ID],
   });
 };
 

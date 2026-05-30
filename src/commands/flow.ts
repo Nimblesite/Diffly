@@ -1,5 +1,13 @@
 import * as vscode from "vscode";
-import { LOG_EVENTS, REF_TYPES, REV_KINDS, SIDE_B_KINDS, TITLE_PREFIX, UI_TEXT } from "../constants";
+import {
+  LOG_EVENTS,
+  OUTPUT_CHANNEL_NAME,
+  REF_TYPES,
+  REV_KINDS,
+  SIDE_B_KINDS,
+  TITLE_PREFIX,
+  UI_TEXT,
+} from "../constants";
 import type { GitRepo } from "../git/GitRepo";
 import type { GitRunner } from "../git/GitRunner";
 import type { GitApi } from "../vscodeGitApi";
@@ -29,7 +37,7 @@ export const reportGitError = ({ output, op, e }: { output: vscode.OutputChannel
   if (e.stderr !== undefined && e.stderr !== "") {
     output.appendLine(e.stderr);
   }
-  void vscode.window.showErrorMessage(`${TITLE_PREFIX} ${op} failed (see Output → Diffr).`);
+  void vscode.window.showErrorMessage(`${TITLE_PREFIX} ${op} failed (see Output → ${OUTPUT_CHANNEL_NAME}).`);
 };
 
 export const resolveSideB = async ({
