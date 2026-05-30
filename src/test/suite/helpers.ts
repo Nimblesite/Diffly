@@ -36,6 +36,15 @@ export const readSeedShas = (): SeedShas => {
   return { first, second, third };
 };
 
+// Reproduces how VSCode invokes `scm/historyItem/context` commands from the
+// commit graph: the SourceControl provider (whose id is "git") is passed FIRST,
+// then the history item. A handler that reads the first argument's `id` by
+// mistake gets the literal "git" instead of the commit SHA.
+export const scmHistoryArgs = (sha: string, parentIds: readonly string[] = []): readonly [unknown, unknown] => [
+  { id: "git", rootUri: vscode.Uri.file(workspaceRoot()), label: "Git" },
+  { id: sha, parentIds, message: "seed commit", displayId: sha.slice(0, 8) },
+];
+
 export const tick = async (count = 30): Promise<void> => {
   await new Promise<void>((resolve) => {
     let i = 0;
@@ -106,6 +115,76 @@ export const waitForDiffTab = async ({
       }
     });
   });
+};
+
+export interface MultiDiffEntry {
+  readonly original: vscode.Uri;
+  readonly modified: vscode.Uri;
+}
+
+// VSCode's built-in multi-diff editor tab carries a `textDiffs` array of
+// {original, modified} URI pairs. `vscode.Tab.input` is typed `unknown`, so the
+// `in` checks below narrow it without an `as` cast; @types/vscode in this repo
+// predates the `TabInputTextMultiDiff` class, so we duck-type the runtime shape.
+const multiDiffTextDiffs = (tab: vscode.Tab): readonly MultiDiffEntry[] | undefined => {
+  const input = tab.input;
+  if (typeof input !== "object" || input === null || !("textDiffs" in input)) {
+    return undefined;
+  }
+  const diffs = input.textDiffs;
+  return Array.isArray(diffs) ? diffs : undefined;
+};
+
+export const allMultiDiffTabs = (): vscode.Tab[] =>
+  vscode.window.tabGroups.all.flatMap((g) => g.tabs).filter((t) => multiDiffTextDiffs(t) !== undefined);
+
+export const multiDiffEntries = (tab: vscode.Tab): readonly MultiDiffEntry[] => {
+  const diffs = multiDiffTextDiffs(tab);
+  if (diffs === undefined) {
+    throw new Error(`Tab is not a multi-diff editor: ${tab.label}`);
+  }
+  return diffs;
+};
+
+const describeOpenTabs = (): string => {
+  const tabs = vscode.window.tabGroups.all.flatMap((g) => g.tabs);
+  if (tabs.length === 0) {
+    return "no tabs open";
+  }
+  return tabs
+    .map((t) => {
+      const input: unknown = t.input;
+      const ctor = typeof input === "object" && input !== null ? input.constructor.name : typeof input;
+      const diffs = multiDiffTextDiffs(t);
+      const tag = diffs === undefined ? ctor : `${ctor}+textDiffs(${diffs.length.toString()})`;
+      return `[${tag}] ${t.label}`;
+    })
+    .join(" | ");
+};
+
+// The multi-diff editor opens before its child resources finish resolving, so
+// the tab's `textDiffs` array starts empty and fills in a moment later. The
+// fill-in does not always emit onDidChangeTabs, so we poll for a multi-diff tab
+// whose `textDiffs` is populated rather than settling for the first empty one.
+export const waitForMultiDiffTab = async ({
+  timeoutMs = 20000,
+}: {
+  timeoutMs?: number;
+} = {}): Promise<vscode.Tab> => {
+  const POLL_MS = 100;
+  const deadline = Date.now() + timeoutMs;
+  for (;;) {
+    const ready = allMultiDiffTabs().find((t) => multiDiffEntries(t).length > 0);
+    if (ready !== undefined) {
+      return ready;
+    }
+    if (Date.now() >= deadline) {
+      throw new Error(`Timed out waiting for a populated multi-diff tab. Open tabs: ${describeOpenTabs()}`);
+    }
+    await new Promise<void>((resolve) => {
+      setTimeout(resolve, POLL_MS);
+    });
+  }
 };
 
 export const closeAllEditors = async (): Promise<void> => {

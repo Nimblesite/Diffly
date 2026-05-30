@@ -1,5 +1,5 @@
 import { strict as assert } from "node:assert";
-import { extractHistoryItemSha } from "../../commands/historyItem";
+import { extractHistoryItemSha, historyItemShaFromArgs } from "../../commands/historyItem";
 
 const FULL_SHA = "02920d872f11ed22afacf3966cb1da30b72dfe94";
 
@@ -41,5 +41,46 @@ describe("extractHistoryItemSha", () => {
     assert.equal(extractHistoryItemSha({ historyItem: {} }), undefined);
     assert.equal(extractHistoryItemSha({ historyItem: { id: "" } }), undefined);
     assert.equal(extractHistoryItemSha({ historyItem: { id: 0 } }), undefined);
+  });
+});
+
+describe("historyItemShaFromArgs", () => {
+  const PARENT = "30cdf1cbf5d7dc13ce1bc96c3b693d44eeda3a8a";
+
+  it("ignores the leading git SourceControl provider and reads the history item's id", () => {
+    // The exact two-argument shape VSCode passes from the commit graph:
+    // provider (id "git") FIRST, then the history item.
+    const provider = { id: "git", rootUri: { fsPath: "/repo" }, label: "Git" };
+    const historyItem = { id: FULL_SHA, parentIds: [PARENT], message: "x" };
+    assert.equal(historyItemShaFromArgs([provider, historyItem]), FULL_SHA);
+  });
+
+  it('never returns the provider\'s literal "git" id when a real history item is present', () => {
+    const provider = { id: "git", rootUri: { fsPath: "/repo" } };
+    const historyItem = { id: FULL_SHA, parentIds: [] };
+    assert.equal(historyItemShaFromArgs([provider, historyItem]), FULL_SHA);
+    assert.notEqual(historyItemShaFromArgs([provider, historyItem]), "git");
+  });
+
+  it("recognises a root-commit history item whose parentIds is an empty array", () => {
+    assert.equal(historyItemShaFromArgs([{ id: "git" }, { id: FULL_SHA, parentIds: [] }]), FULL_SHA);
+  });
+
+  it("unwraps a { historyItem } wrapper that carries parentIds", () => {
+    const wrapper = { historyItem: { id: FULL_SHA, parentIds: [PARENT] } };
+    assert.equal(historyItemShaFromArgs([{ id: "git" }, wrapper]), FULL_SHA);
+  });
+
+  it("falls back to the single { id } / wrapper / string shapes when nothing carries parentIds", () => {
+    assert.equal(historyItemShaFromArgs([{ id: FULL_SHA }]), FULL_SHA);
+    assert.equal(historyItemShaFromArgs([{ historyItem: { id: FULL_SHA } }]), FULL_SHA);
+    assert.equal(historyItemShaFromArgs([FULL_SHA]), FULL_SHA);
+    assert.equal(historyItemShaFromArgs(["main"]), "main");
+  });
+
+  it("returns undefined when no argument carries a usable sha", () => {
+    assert.equal(historyItemShaFromArgs([]), undefined);
+    assert.equal(historyItemShaFromArgs([undefined, null, 42, true]), undefined);
+    assert.equal(historyItemShaFromArgs([{ message: "no id here" }]), undefined);
   });
 });
